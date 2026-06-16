@@ -295,3 +295,23 @@ Gross strategy returns are calculated as:
 
 ```text
 sum(asset_return_i * applied_weight_i)
+
+## Strategy comparison framework
+
+The backtesting layer includes a static versus dynamic comparison framework.
+
+The comparison runs both strategies through the same return engine, transaction-cost model, and risk metric framework.
+
+The static strategy is treated as the benchmark.
+
+The dynamic regime-aware strategy is treated as the candidate.
+
+Metrics are calculated on overlapping net return dates so both strategies are evaluated over the same period.
+
+The comparison layer reports:
+
+- Static strategy backtest results
+- Dynamic strategy backtest results
+- Aligned net returns
+- Risk metric summary
+- Candidate-minus-benchmark metric deltas
