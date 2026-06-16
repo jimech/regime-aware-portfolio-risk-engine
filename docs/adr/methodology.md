@@ -427,3 +427,21 @@ The first reporting layer supports:
 These tables preserve machine-readable metric names and add readable labels for presentation.
 
 This creates a clean handoff from analytics modules to notebooks, dashboards, and final reporting.
+
+
+---
+
+## Report exports
+
+The reporting layer includes utilities for exporting report artifacts.
+
+The first export layer supports:
+
+- CSV table exports
+- PNG figure exports
+- Markdown report index generation
+- JSON manifest generation
+
+Exports are written into a structured output directory with separate table and figure folders.
+
+This makes analytical results easier to review, share, and reproduce.
