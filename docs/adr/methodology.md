@@ -142,3 +142,15 @@ Asset-level features are pivoted into wide format using the naming pattern:
 
 ```text
 feature_name__TICKER
+
+## Baseline regime detection
+
+The first regime detection model is K-Means clustering.
+
+The model uses the date-indexed regime feature matrix and assigns each date to a numeric regime label.
+
+K-Means is used as a baseline because it is simple, reproducible, and easy to test.
+
+The number of regimes is configurable.
+
+Numeric regime labels will later be interpreted using regime-specific return, volatility, drawdown, and correlation diagnostics.
