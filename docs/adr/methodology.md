@@ -460,3 +460,31 @@ The assembly layer combines:
 It produces report-ready tables and figures, and can optionally export them into a structured report directory.
 
 This creates a reproducible path from analytics outputs to final project reporting.
+
+## Command-line interface
+
+The project includes a lightweight command-line interface.
+
+The first CLI layer supports:
+
+- Version checks
+- Basic project healthchecks
+- Optional output directory validation and creation
+
+This provides a terminal entry point for the project and creates a foundation for future workflow commands such as data download, feature generation, model validation, backtesting, and report export.
+
+
+---
+
+## CLI report export
+
+The command-line interface includes a report export command.
+
+The command accepts named CSV tables and optional PNG figures, then writes a structured report folder containing:
+
+- Exported tables
+- Exported figures
+- Markdown report index
+- JSON manifest
+
+This allows report artifacts to be generated from the terminal without writing Python code.

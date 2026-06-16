@@ -5,6 +5,10 @@ from pathlib import Path
 from typing import Any
 
 from regime_risk_engine import __version__
+from regime_risk_engine.reporting.cli_export import (
+    CliReportExportError,
+    export_report_from_files,
+)
 
 
 class CliError(ValueError):
@@ -51,6 +55,40 @@ def build_parser() -> argparse.ArgumentParser:
     )
     healthcheck_parser.set_defaults(handler=_handle_healthcheck)
 
+    export_report_parser = subparsers.add_parser(
+        "export-report",
+        help="Export report-ready CSV tables and optional PNG figures.",
+    )
+    export_report_parser.add_argument(
+        "--output-dir",
+        type=Path,
+        required=True,
+        help="Directory where report artifacts will be written.",
+    )
+    export_report_parser.add_argument(
+        "--table",
+        action="append",
+        default=[],
+        help="Named CSV table input in the format name=path.",
+    )
+    export_report_parser.add_argument(
+        "--figure",
+        action="append",
+        default=[],
+        help="Named PNG figure input in the format name=path.",
+    )
+    export_report_parser.add_argument(
+        "--title",
+        default="Regime Risk Engine Report",
+        help="Report title used in the Markdown index.",
+    )
+    export_report_parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Print export result as JSON.",
+    )
+    export_report_parser.set_defaults(handler=_handle_export_report)
+
     return parser
 
 
@@ -96,6 +134,48 @@ def _handle_healthcheck(args: argparse.Namespace) -> int:
         if result["output_dir"] is not None:
             print(f"- output_dir: {result['output_dir']}")
             print(f"- output_dir_exists: {result['output_dir_exists']}")
+
+    return 0
+
+
+def _handle_export_report(args: argparse.Namespace) -> int:
+    table_specs = list(getattr(args, "table", []))
+    figure_specs = list(getattr(args, "figure", []))
+    output_dir = args.output_dir
+    title = str(getattr(args, "title", "Regime Risk Engine Report"))
+    as_json = bool(getattr(args, "json", False))
+
+    try:
+        result = export_report_from_files(
+            table_specs=table_specs,
+            figure_specs=figure_specs,
+            output_dir=output_dir,
+            title=title,
+        )
+    except CliReportExportError as error:
+        raise CliError(str(error)) from error
+
+    export_result = {
+        "output_dir": str(result.output_dir),
+        "markdown_path": str(result.markdown_path),
+        "manifest_path": str(result.manifest_path),
+        "tables": {
+            name: str(path) for name, path in sorted(result.table_paths.items())
+        },
+        "figures": {
+            name: str(path) for name, path in sorted(result.figure_paths.items())
+        },
+    }
+
+    if as_json:
+        print(json.dumps(export_result, indent=2, sort_keys=True))
+    else:
+        print("Report exported")
+        print(f"- output_dir: {result.output_dir}")
+        print(f"- markdown_path: {result.markdown_path}")
+        print(f"- manifest_path: {result.manifest_path}")
+        print(f"- tables: {len(result.table_paths)}")
+        print(f"- figures: {len(result.figure_paths)}")
 
     return 0
 
