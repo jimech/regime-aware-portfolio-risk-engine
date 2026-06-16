@@ -180,3 +180,15 @@ The project adds a post-model interpretation layer that summarizes each regime b
 These diagnostics are used to assign human-readable labels such as high-volatility stress, bull low-volatility, growth recovery, or neutral mixed.
 
 The labeling step happens after model prediction and does not influence model training.
+
+## Regime visualizations
+
+The regime detection layer includes diagnostic plots.
+
+The first set of visualizations includes:
+
+- A timeline of detected regime labels
+- Regime probability plots for probabilistic models
+- Cumulative returns with regime background shading
+
+These plots help evaluate whether model-detected regimes align with visible changes in portfolio behavior.
