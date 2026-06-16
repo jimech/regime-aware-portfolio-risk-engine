@@ -328,3 +328,22 @@ The first diagnostic layer includes:
 - Rolling annualized Sharpe ratio
 
 These diagnostics help evaluate whether the dynamic regime-aware strategy behaves differently from the static benchmark through time, not only at the final summary-metric level.
+
+## Regime-conditioned backtest evaluation
+
+The backtesting layer evaluates strategy performance within each detected regime.
+
+This analysis aligns strategy returns with regime labels and calculates risk metrics by regime and strategy.
+
+The default comparison uses:
+
+- Static strategy as the benchmark
+- Dynamic regime-aware strategy as the candidate
+
+The output includes:
+
+- Strategy returns with regime labels
+- Metric summaries by regime and strategy
+- Dynamic-minus-static metric deltas by regime
+
+This helps identify whether the dynamic strategy improves risk-adjusted performance, drawdowns, or tail risk in specific market environments.
