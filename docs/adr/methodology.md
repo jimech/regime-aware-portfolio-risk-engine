@@ -315,3 +315,16 @@ The comparison layer reports:
 - Aligned net returns
 - Risk metric summary
 - Candidate-minus-benchmark metric deltas
+
+## Backtest diagnostics
+
+The backtesting layer includes diagnostic time series for strategy evaluation.
+
+The first diagnostic layer includes:
+
+- Cumulative returns
+- Drawdowns
+- Rolling annualized volatility
+- Rolling annualized Sharpe ratio
+
+These diagnostics help evaluate whether the dynamic regime-aware strategy behaves differently from the static benchmark through time, not only at the final summary-metric level.
