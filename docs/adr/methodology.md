@@ -488,3 +488,21 @@ The command accepts named CSV tables and optional PNG figures, then writes a str
 - JSON manifest
 
 This allows report artifacts to be generated from the terminal without writing Python code.
+
+
+---
+
+
+## CLI config inspection
+
+The command-line interface includes a config inspection command.
+
+The command reads a YAML config file and reports:
+
+- Top-level config keys
+- Detected tickers
+- Detected start and end dates
+- Detected data directory
+- Detected report directory
+
+This helps users verify project configuration before running longer workflows.

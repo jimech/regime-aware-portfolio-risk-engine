@@ -5,6 +5,11 @@ from pathlib import Path
 from typing import Any
 
 from regime_risk_engine import __version__
+from regime_risk_engine.cli_config import (
+    CliConfigInspectionError,
+    format_config_inspection,
+    inspect_config_file,
+)
 from regime_risk_engine.reporting.cli_export import (
     CliReportExportError,
     export_report_from_files,
@@ -58,6 +63,23 @@ def build_parser() -> argparse.ArgumentParser:
         help="Print healthcheck output as JSON.",
     )
     healthcheck_parser.set_defaults(handler=_handle_healthcheck)
+
+    inspect_config_parser = subparsers.add_parser(
+        "inspect-config",
+        help="Inspect a YAML project config file.",
+    )
+    inspect_config_parser.add_argument(
+        "--config",
+        type=Path,
+        default=Path("configs/base.yaml"),
+        help="Path to the YAML config file.",
+    )
+    inspect_config_parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Print config inspection output as JSON.",
+    )
+    inspect_config_parser.set_defaults(handler=_handle_inspect_config)
 
     export_report_parser = subparsers.add_parser(
         "export-report",
@@ -155,6 +177,23 @@ def _handle_healthcheck(args: argparse.Namespace) -> int:
         if result["output_dir"] is not None:
             print(f"- output_dir: {result['output_dir']}")
             print(f"- output_dir_exists: {result['output_dir_exists']}")
+
+    return 0
+
+
+def _handle_inspect_config(args: argparse.Namespace) -> int:
+    config_path = args.config
+    as_json = bool(getattr(args, "json", False))
+
+    try:
+        result = inspect_config_file(config_path)
+    except CliConfigInspectionError as error:
+        raise CliError(str(error)) from error
+
+    if as_json:
+        print(json.dumps(result.to_dict(), indent=2, sort_keys=True))
+    else:
+        print(format_config_inspection(result))
 
     return 0
 
