@@ -73,3 +73,26 @@ The default return type is simple return:
 
 ```text
 price_t / price_t-1 - 1
+
+
+---
+
+## Step 5 — Update `docs/methodology.md`
+
+Add:
+
+```markdown
+## Rolling return and volatility features
+
+The first feature engineering layer calculates rolling cumulative simple returns and annualized rolling volatility.
+
+The default windows are:
+
+- 21 trading days
+- 63 trading days
+- 126 trading days
+- 252 trading days
+
+These approximate one month, one quarter, half a year, and one trading year.
+
+Rolling features are calculated independently by ticker and use historical observations only.
