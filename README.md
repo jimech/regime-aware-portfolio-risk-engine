@@ -1,0 +1,43 @@
+# Regime-Aware Portfolio Risk Engine
+
+A finance and machine learning project for detecting market regimes and comparing a static portfolio against a dynamic regime-aware allocation strategy.
+
+## Project objective
+
+This project investigates whether portfolio risk changes across market regimes and whether allocation decisions can be improved by adapting to those regimes.
+
+The engine will support:
+
+- Multi-asset market data collection
+- Financial feature engineering
+- Market regime detection
+- Regime-specific risk analytics
+- Static portfolio benchmarking
+- Dynamic regime-aware allocation
+- Backtesting
+- Model validation
+- Reporting and dashboarding
+- Automated testing and CI
+
+## Core research question
+
+Can we detect changing market regimes and adjust portfolio risk exposure dynamically?
+
+## Planned epics
+
+1. Project setup
+2. Data collection
+3. Feature engineering
+4. Regime detection
+5. Regime-specific risk analytics
+6. Dynamic allocation strategy
+7. Backtesting engine
+8. Model validation
+9. Reporting and dashboard
+10. Testing and CI
+
+## Development setup
+
+```bash
+pip install -e ".[dev]"
+pytest

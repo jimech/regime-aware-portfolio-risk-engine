@@ -1,0 +1,29 @@
+[project]
+name = "regime-aware-portfolio-risk-engine"
+version = "0.1.0"
+description = "A regime-aware portfolio risk engine comparing static and dynamic allocation strategies."
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    { name = "Jimena Chinchilla" }
+]
+dependencies = [
+    "numpy",
+    "pandas",
+    "scikit-learn",
+    "scipy",
+    "matplotlib",
+    "pyyaml",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
