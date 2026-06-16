@@ -445,3 +445,18 @@ The first export layer supports:
 Exports are written into a structured output directory with separate table and figure folders.
 
 This makes analytical results easier to review, share, and reproduce.
+
+## Report assembly
+
+The reporting layer includes a high-level report assembly workflow.
+
+The assembly layer combines:
+
+- Strategy comparison results
+- Backtest diagnostics
+- Regime-conditioned strategy evaluation
+- Regime model selection outputs
+
+It produces report-ready tables and figures, and can optionally export them into a structured report directory.
+
+This creates a reproducible path from analytics outputs to final project reporting.
