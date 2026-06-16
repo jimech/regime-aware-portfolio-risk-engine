@@ -412,3 +412,18 @@ The first model selection layer summarizes walk-forward validation results acros
 Models can be ranked by a selected metric.
 
 The default ranking metric is test silhouette score, but final model choice should also consider interpretability, stability, regime-specific risk behavior, and backtest performance.
+
+## Reporting table layer
+
+The reporting layer converts analytical outputs into clean report-ready tables.
+
+The first reporting layer supports:
+
+- Strategy metric tables
+- Metric delta tables
+- Regime-conditioned metric tables
+- Regime model ranking tables
+
+These tables preserve machine-readable metric names and add readable labels for presentation.
+
+This creates a clean handoff from analytics modules to notebooks, dashboards, and final reporting.
