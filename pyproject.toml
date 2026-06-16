@@ -61,3 +61,6 @@ files = ["src"]
 [build-system]
 requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
+
+[project.scripts]
+regime-risk-engine = "regime_risk_engine.cli:main"
