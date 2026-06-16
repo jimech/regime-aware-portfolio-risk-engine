@@ -72,6 +72,7 @@ During local development, commands can be run with:
 
 ```bash
 python -m regime_risk_engine healthcheck
+```
 
 ## Continuous integration
 
@@ -94,3 +95,15 @@ Run tests with coverage locally:
 
 ```bash
 pytest --cov=regime_risk_engine --cov-report=term-missing
+
+```
+
+---
+
+
+
+The project uses semantic versioning guidance and a documented release checklist.
+
+Before tagging a release, run the full local quality suite and confirm GitHub Actions passes.
+
+See [`docs/release-checklist.md`](docs/release-checklist.md) for the full release process.
