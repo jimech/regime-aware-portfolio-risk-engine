@@ -271,3 +271,12 @@ Each regime receives a full target allocation across the available asset univers
 This rule-based policy layer is intentionally transparent. It allows the project to test whether changing portfolio exposure by regime can improve risk-adjusted performance relative to the static benchmark.
 
 Unknown regimes may use a fallback allocation if one is provided.
+
+## Turnover and transaction costs
+
+The project models turnover and transaction costs for allocation changes.
+
+One-way turnover is calculated as:
+
+```text
+0.5 * sum(abs(target_weight_i - current_weight_i))
