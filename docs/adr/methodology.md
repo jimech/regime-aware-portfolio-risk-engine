@@ -164,3 +164,19 @@ Unlike K-Means, the Gaussian Mixture Model outputs both hard regime labels and s
 This is useful for identifying periods where the market may be transitioning between regimes.
 
 The probability output should be interpreted carefully and validated against out-of-sample behavior and regime stability diagnostics.
+
+## Regime labeling and interpretation
+
+Regime detection models produce numeric labels that are arbitrary by default.
+
+The project adds a post-model interpretation layer that summarizes each regime by:
+
+- Annualized return
+- Annualized volatility
+- Maximum drawdown
+- Average pairwise correlation
+- Observation count
+
+These diagnostics are used to assign human-readable labels such as high-volatility stress, bull low-volatility, growth recovery, or neutral mixed.
+
+The labeling step happens after model prediction and does not influence model training.
