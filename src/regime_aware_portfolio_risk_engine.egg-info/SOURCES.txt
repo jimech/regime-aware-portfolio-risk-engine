@@ -9,6 +9,7 @@ src/regime_aware_portfolio_risk_engine.egg-info/top_level.txt
 src/regime_risk_engine/__init__.py
 src/regime_risk_engine/__main__.py
 src/regime_risk_engine/cli.py
+src/regime_risk_engine/cli_config.py
 src/regime_risk_engine/config.py
 src/regime_risk_engine/allocation/__init__.py
 src/regime_risk_engine/allocation/constraints.py
@@ -41,6 +42,7 @@ src/regime_risk_engine/reporting/__init__.py
 src/regime_risk_engine/reporting/builder.py
 src/regime_risk_engine/reporting/cli_export.py
 src/regime_risk_engine/reporting/demo.py
+src/regime_risk_engine/reporting/demo_workflow.py
 src/regime_risk_engine/reporting/export.py
 src/regime_risk_engine/reporting/plots.py
 src/regime_risk_engine/reporting/tables.py
@@ -59,7 +61,9 @@ tests/test_backtest_comparison.py
 tests/test_backtest_diagnostics.py
 tests/test_backtest_engine.py
 tests/test_cli.py
+tests/test_cli_config.py
 tests/test_cli_demo_report_inputs.py
+tests/test_cli_demo_report_workflow.py
 tests/test_cli_report_export.py
 tests/test_config.py
 tests/test_correlation_features.py
