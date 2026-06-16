@@ -280,3 +280,18 @@ One-way turnover is calculated as:
 
 ```text
 0.5 * sum(abs(target_weight_i - current_weight_i))
+
+
+---
+
+
+## Backtest return engine
+
+The backtesting layer converts asset returns and portfolio weights into strategy-level returns.
+
+The engine applies portfolio weights with a default one-period lag to reduce look-ahead bias.
+
+Gross strategy returns are calculated as:
+
+```text
+sum(asset_return_i * applied_weight_i)
