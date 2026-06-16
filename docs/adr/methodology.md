@@ -527,3 +527,17 @@ The documentation explains how to run commands using both:
 
 ```bash
 python -m regime_risk_engine
+
+## Investment research summary
+
+The research layer converts analytical outputs into investment conclusions.
+
+The first research summary layer interprets:
+
+- Strategy metric deltas
+- Favorable and unfavorable changes
+- Regime-level strategy performance
+- Overall candidate-versus-benchmark verdict
+- Executive summary language
+
+This layer helps connect the quantitative engine to portfolio-management conclusions.
