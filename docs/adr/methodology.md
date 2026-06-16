@@ -121,3 +121,28 @@ These features help identify market environments such as:
 - Negative-momentum bear markets
 - Recovery periods
 - Drawdown and stress regimes
+
+
+---
+
+## Step 4 — Update `docs/methodology.md`
+
+Add:
+
+```markdown
+## Correlation and diversification features
+
+The third feature engineering layer calculates rolling correlation features.
+
+The project includes:
+
+- Rolling correlation matrices
+- Average pairwise correlation across assets
+- Selected pairwise correlations
+- Equity-bond correlation
+
+These features help identify diversification stress.
+
+A rising average pairwise correlation may indicate that assets are moving together more closely, which can reduce diversification benefits during market stress.
+
+Equity-bond correlation is tracked because the relationship between stocks and bonds can change across inflation, growth, and crisis regimes.
