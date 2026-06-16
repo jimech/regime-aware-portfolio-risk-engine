@@ -506,3 +506,15 @@ The command reads a YAML config file and reports:
 - Detected report directory
 
 This helps users verify project configuration before running longer workflows.
+
+
+---
+
+
+## CLI demo report workflow
+
+The command-line interface includes a one-step demo report workflow.
+
+The command creates demo input tables and figures, exports them into a report folder, and generates a Markdown index and JSON manifest.
+
+This provides a quick smoke test for the reporting workflow and helps users verify that the CLI, reporting export, and demo generation layers work together.

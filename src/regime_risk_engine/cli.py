@@ -18,6 +18,10 @@ from regime_risk_engine.reporting.demo import (
     DemoReportInputError,
     create_demo_report_inputs,
 )
+from regime_risk_engine.reporting.demo_workflow import (
+    DemoReportWorkflowError,
+    run_demo_report_workflow,
+)
 
 
 class CliError(ValueError):
@@ -131,6 +135,28 @@ def build_parser() -> argparse.ArgumentParser:
         help="Print generated paths as JSON.",
     )
     demo_parser.set_defaults(handler=_handle_create_demo_report_inputs)
+
+    demo_workflow_parser = subparsers.add_parser(
+        "run-demo-report",
+        help="Create demo inputs and export a complete demo report.",
+    )
+    demo_workflow_parser.add_argument(
+        "--output-dir",
+        type=Path,
+        required=True,
+        help="Directory where demo workflow artifacts will be written.",
+    )
+    demo_workflow_parser.add_argument(
+        "--title",
+        default="Demo Regime Risk Engine Report",
+        help="Report title used in the Markdown index.",
+    )
+    demo_workflow_parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Print generated paths as JSON.",
+    )
+    demo_workflow_parser.set_defaults(handler=_handle_run_demo_report)
 
     return parser
 
@@ -264,6 +290,36 @@ def _handle_create_demo_report_inputs(args: argparse.Namespace) -> int:
     else:
         print("Demo report inputs created")
         print(f"- output_dir: {result.output_dir}")
+        print(f"- tables: {len(result.table_paths)}")
+        print(f"- figures: {len(result.figure_paths)}")
+
+    return 0
+
+
+def _handle_run_demo_report(args: argparse.Namespace) -> int:
+    output_dir = args.output_dir
+    title = str(getattr(args, "title", "Demo Regime Risk Engine Report"))
+    as_json = bool(getattr(args, "json", False))
+
+    try:
+        result = run_demo_report_workflow(
+            output_dir=output_dir,
+            title=title,
+        )
+    except DemoReportWorkflowError as error:
+        raise CliError(str(error)) from error
+
+    result_dict = result.to_dict()
+
+    if as_json:
+        print(json.dumps(result_dict, indent=2, sort_keys=True))
+    else:
+        print("Demo report workflow completed")
+        print(f"- output_dir: {result.output_dir}")
+        print(f"- input_dir: {result.input_dir}")
+        print(f"- report_dir: {result.report_dir}")
+        print(f"- markdown_path: {result.markdown_path}")
+        print(f"- manifest_path: {result.manifest_path}")
         print(f"- tables: {len(result.table_paths)}")
         print(f"- figures: {len(result.figure_paths)}")
 
