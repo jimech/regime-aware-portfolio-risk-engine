@@ -57,3 +57,28 @@ mypy src
 pytest
 pre-commit run --all-files
 ```
+
+
+---
+
+## Command-line usage
+
+The project includes a command-line interface.
+
+During local development, commands can be run with:
+
+```bash
+python -m regime_risk_engine healthcheck
+
+## Continuous integration
+
+The project uses GitHub Actions for continuous integration.
+
+On pushes and pull requests to `main`, CI runs:
+
+- Ruff formatting check
+- Ruff linting
+- mypy type checking
+- pytest test suite
+
+The workflow is defined in `.github/workflows/ci.yml`.

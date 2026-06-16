@@ -518,3 +518,12 @@ The command-line interface includes a one-step demo report workflow.
 The command creates demo input tables and figures, exports them into a report folder, and generates a Markdown index and JSON manifest.
 
 This provides a quick smoke test for the reporting workflow and helps users verify that the CLI, reporting export, and demo generation layers work together.
+
+## CLI documentation
+
+The project includes dedicated CLI documentation in `docs/cli.md`.
+
+The documentation explains how to run commands using both:
+
+```bash
+python -m regime_risk_engine
