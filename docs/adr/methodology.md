@@ -396,3 +396,19 @@ The validation output includes:
 - Internal clustering diagnostics such as silhouette score and Calinski-Harabasz score
 
 This reduces look-ahead leakage and helps evaluate whether regime model outputs are stable across time.
+
+## Regime model selection
+
+The validation layer includes a model selection summary for comparing candidate regime detection models.
+
+The first model selection layer summarizes walk-forward validation results across models using:
+
+- Regime counts
+- Transition rates
+- Dominant regime shares
+- Silhouette scores
+- Calinski-Harabasz scores
+
+Models can be ranked by a selected metric.
+
+The default ranking metric is test silhouette score, but final model choice should also consider interpretability, stability, regime-specific risk behavior, and backtest performance.
