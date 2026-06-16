@@ -39,5 +39,21 @@ Can we detect changing market regimes and adjust portfolio risk exposure dynamic
 ## Development setup
 
 ```bash
-pip install -e ".[dev]"
+python3.12 -m venv .venv
+source .venv/bin/activate
+python -m pip install -e ".[dev]"
+```
+
+## Run checks
+
+Activate the virtual environment first so `ruff`, `mypy`, and `pytest` are on
+your shell `PATH`:
+
+```bash
+source .venv/bin/activate
+ruff check .
+ruff format --check .
+mypy src
 pytest
+pre-commit run --all-files
+```
