@@ -22,6 +22,18 @@ assets:
       region: us
       role: us_large_cap_equity
 
+    - ticker: QQQ
+      name: Invesco QQQ Trust
+      asset_class: equity
+      region: us
+      role: us_large_cap_growth_equity
+
+    - ticker: IWM
+      name: iShares Russell 2000 ETF
+      asset_class: equity
+      region: us
+      role: us_small_cap_equity
+
     - ticker: EFA
       name: iShares MSCI EAFE ETF
       asset_class: equity
@@ -46,11 +58,23 @@ assets:
       region: us
       role: long_duration_treasury
 
+    - ticker: SHY
+      name: iShares 1-3 Year Treasury Bond ETF
+      asset_class: cash_like
+      region: us
+      role: cash_proxy
+
     - ticker: LQD
       name: iShares iBoxx Investment Grade Corporate Bond ETF
       asset_class: fixed_income
       region: us
       role: investment_grade_credit
+
+    - ticker: HYG
+      name: iShares iBoxx High Yield Corporate Bond ETF
+      asset_class: fixed_income
+      region: us
+      role: high_yield_credit
 
     - ticker: GLD
       name: SPDR Gold Shares
@@ -58,30 +82,69 @@ assets:
       region: global
       role: gold
 
+    - ticker: DBC
+      name: Invesco DB Commodity Index Tracking Fund
+      asset_class: commodity
+      region: global
+      role: broad_commodities
+
     - ticker: VNQ
       name: Vanguard Real Estate ETF
       asset_class: real_estate
       region: us
       role: real_estate
 
-    - ticker: SHY
-      name: iShares 1-3 Year Treasury Bond ETF
+    - ticker: TIP
+      name: iShares TIPS Bond ETF
+      asset_class: fixed_income
+      region: us
+      role: inflation_protected_bonds
+
+    - ticker: UUP
+      name: Invesco DB US Dollar Index Bullish Fund
+      asset_class: currency
+      region: us
+      role: us_dollar_proxy
+
+    - ticker: VTI
+      name: Vanguard Total Stock Market ETF
+      asset_class: equity
+      region: us
+      role: total_us_equity
+
+    - ticker: AGG
+      name: iShares Core U.S. Aggregate Bond ETF
+      asset_class: fixed_income
+      region: us
+      role: aggregate_bond_market
+
+    - ticker: BIL
+      name: SPDR Bloomberg 1-3 Month T-Bill ETF
       asset_class: cash_like
       region: us
-      role: cash_proxy
+      role: treasury_bill_cash_proxy
 
 portfolio:
   static_weights:
-    SPY: 0.35
-    EFA: 0.15
+    SPY: 0.25
+    QQQ: 0.08
+    IWM: 0.05
+    EFA: 0.12
     EEM: 0.05
-    IEF: 0.20
+    IEF: 0.12
     TLT: 0.05
-    LQD: 0.10
+    SHY: 0.03
+    LQD: 0.07
+    HYG: 0.03
     GLD: 0.05
+    DBC: 0.03
     VNQ: 0.03
-    SHY: 0.02
-  risk_free_asset: SHY
+    TIP: 0.02
+    UUP: 0.01
+    VTI: 0.03
+    AGG: 0.05
+    BIL: 0.03
+  risk_free_asset: BIL
 
 features:
   rolling_windows:
