@@ -1,0 +1,2 @@
+[console_scripts]
+regime-risk-engine = regime_risk_engine.cli:main
