@@ -7,3 +7,6 @@ pyyaml
 
 [dev]
 pytest
+ruff
+mypy
+pre-commit

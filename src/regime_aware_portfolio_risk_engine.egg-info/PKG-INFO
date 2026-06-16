@@ -13,6 +13,9 @@ Requires-Dist: matplotlib
 Requires-Dist: pyyaml
 Provides-Extra: dev
 Requires-Dist: pytest; extra == "dev"
+Requires-Dist: ruff; extra == "dev"
+Requires-Dist: mypy; extra == "dev"
+Requires-Dist: pre-commit; extra == "dev"
 
 # Regime-Aware Portfolio Risk Engine
 
