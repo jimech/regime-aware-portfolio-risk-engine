@@ -154,3 +154,13 @@ K-Means is used as a baseline because it is simple, reproducible, and easy to te
 The number of regimes is configurable.
 
 Numeric regime labels will later be interpreted using regime-specific return, volatility, drawdown, and correlation diagnostics.
+
+## Probabilistic regime detection
+
+The second regime detection model is a Gaussian Mixture Model.
+
+Unlike K-Means, the Gaussian Mixture Model outputs both hard regime labels and soft regime probabilities.
+
+This is useful for identifying periods where the market may be transitioning between regimes.
+
+The probability output should be interpreted carefully and validated against out-of-sample behavior and regime stability diagnostics.
