@@ -364,3 +364,19 @@ Expanding-window validation uses all available past data and grows the training 
 Rolling-window validation uses a fixed-length training window that moves forward through time.
 
 These splits will be used to evaluate regime model stability and strategy robustness.
+
+## Regime stability diagnostics
+
+The validation layer includes diagnostics for regime label stability.
+
+The first stability diagnostics include:
+
+- Regime distribution
+- Regime transition matrix
+- Transition rate
+- Dominant regime share
+- Label agreement across regime model outputs
+
+Because regime detection is unsupervised, labels can be arbitrary. For that reason, the project uses label-invariant agreement metrics such as Adjusted Rand Index and normalized mutual information.
+
+These diagnostics help evaluate whether detected regimes are stable enough to support regime-aware allocation decisions.
