@@ -347,3 +347,20 @@ The output includes:
 - Dynamic-minus-static metric deltas by regime
 
 This helps identify whether the dynamic strategy improves risk-adjusted performance, drawdowns, or tail risk in specific market environments.
+
+## Time-series model validation
+
+The validation layer uses chronological train/test splits.
+
+The first validation utilities support:
+
+- Expanding-window splits
+- Rolling-window splits
+
+These split methods avoid random shuffling and reduce the risk of look-ahead leakage.
+
+Expanding-window validation uses all available past data and grows the training set over time.
+
+Rolling-window validation uses a fixed-length training window that moves forward through time.
+
+These splits will be used to evaluate regime model stability and strategy robustness.
