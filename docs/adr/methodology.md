@@ -238,3 +238,26 @@ The regime correlation layer includes:
 - Average pairwise correlation by regime
 
 These diagnostics help explain why portfolio volatility and drawdown risk may change across regimes.
+
+## Risk contribution analytics
+
+The project calculates asset contribution to portfolio volatility.
+
+The first risk contribution layer includes:
+
+- Portfolio volatility from weights and covariance
+- Marginal risk contribution
+- Component risk contribution
+- Percentage risk contribution
+
+These analytics help identify which assets are driving portfolio risk in each regime.
+
+Risk contribution is especially useful when comparing static portfolio weights against dynamic regime-aware allocations.
+
+## Static benchmark allocation
+
+The static benchmark portfolio uses fixed asset weights over the full evaluation period.
+
+This benchmark represents a passive allocation strategy that does not respond to detected market regimes.
+
+The dynamic regime-aware strategy will later be compared against this static baseline using the same return, risk, drawdown, and tail-risk metrics.
