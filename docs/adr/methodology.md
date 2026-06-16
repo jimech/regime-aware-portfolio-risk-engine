@@ -261,3 +261,13 @@ The static benchmark portfolio uses fixed asset weights over the full evaluation
 This benchmark represents a passive allocation strategy that does not respond to detected market regimes.
 
 The dynamic regime-aware strategy will later be compared against this static baseline using the same return, risk, drawdown, and tail-risk metrics.
+
+## Regime-aware allocation policy
+
+The dynamic allocation strategy maps detected regimes to target asset weights.
+
+Each regime receives a full target allocation across the available asset universe.
+
+This rule-based policy layer is intentionally transparent. It allows the project to test whether changing portfolio exposure by regime can improve risk-adjusted performance relative to the static benchmark.
+
+Unknown regimes may use a fallback allocation if one is provided.
