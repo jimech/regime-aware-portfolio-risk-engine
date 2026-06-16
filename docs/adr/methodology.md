@@ -34,3 +34,25 @@ The initial universe intentionally uses ETFs instead of individual securities be
 The static benchmark portfolio is defined in `configs/base.yaml`.
 
 It acts as the baseline strategy that the dynamic regime-aware allocation will be compared against.
+
+## Data validation
+
+Historical price data is validated before it is used for return calculation, feature engineering, regime detection, risk analytics, or backtesting.
+
+The validation layer checks for:
+
+- Missing required columns
+- Empty datasets
+- Invalid dates
+- Duplicate date/ticker rows
+- Missing adjusted close values
+- Non-positive adjusted close values
+- Missing expected tickers
+- Unexpected tickers
+- Missing observed dates by ticker
+
+Validation issues are returned as structured objects with a severity level.
+
+Errors represent blocking data problems that should stop the pipeline.
+
+Warnings represent issues that may be acceptable in some research contexts but should be reviewed before interpreting results.
