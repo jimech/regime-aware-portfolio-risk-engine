@@ -64,6 +64,7 @@ tests/test_cli.py
 tests/test_cli_config.py
 tests/test_cli_demo_report_inputs.py
 tests/test_cli_demo_report_workflow.py
+tests/test_cli_documentation.py
 tests/test_cli_report_export.py
 tests/test_config.py
 tests/test_correlation_features.py

@@ -24,6 +24,21 @@ dev = [
     "mypy",
     "pre-commit",
     "types-PyYAML",
+    "pytest-cov",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["regime_risk_engine"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+fail_under = 80
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
 ]
 
 [tool.pytest.ini_options]

@@ -18,6 +18,7 @@ Requires-Dist: ruff; extra == "dev"
 Requires-Dist: mypy; extra == "dev"
 Requires-Dist: pre-commit; extra == "dev"
 Requires-Dist: types-PyYAML; extra == "dev"
+Requires-Dist: pytest-cov; extra == "dev"
 
 # Regime-Aware Portfolio Risk Engine
 
@@ -78,3 +79,37 @@ mypy src
 pytest
 pre-commit run --all-files
 ```
+
+
+---
+
+## Command-line usage
+
+The project includes a command-line interface.
+
+During local development, commands can be run with:
+
+```bash
+python -m regime_risk_engine healthcheck
+
+## Continuous integration
+
+The project uses GitHub Actions for continuous integration.
+
+On pushes and pull requests to `main`, CI runs:
+
+- Ruff formatting check
+- Ruff linting
+- mypy type checking
+- pytest test suite
+
+The workflow is defined in `.github/workflows/ci.yml`.
+
+## Test coverage
+
+The project measures test coverage with `pytest-cov`.
+
+Run tests with coverage locally:
+
+```bash
+pytest --cov=regime_risk_engine --cov-report=term-missing

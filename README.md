@@ -82,3 +82,12 @@ On pushes and pull requests to `main`, CI runs:
 - pytest test suite
 
 The workflow is defined in `.github/workflows/ci.yml`.
+
+## Test coverage
+
+The project measures test coverage with `pytest-cov`.
+
+Run tests with coverage locally:
+
+```bash
+pytest --cov=regime_risk_engine --cov-report=term-missing

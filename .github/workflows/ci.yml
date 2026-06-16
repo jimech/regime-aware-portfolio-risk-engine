@@ -47,5 +47,5 @@ jobs:
       - name: Run mypy
         run: mypy src
 
-      - name: Run tests
-        run: pytest
+      - name: Run tests with coverage
+        run: pytest --cov=regime_risk_engine --cov-report=term-missing
