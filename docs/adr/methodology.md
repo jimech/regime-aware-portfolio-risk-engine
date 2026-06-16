@@ -56,3 +56,20 @@ Validation issues are returned as structured objects with a severity level.
 Errors represent blocking data problems that should stop the pipeline.
 
 Warnings represent issues that may be acceptable in some research contexts but should be reviewed before interpreting results.
+
+
+---
+
+## Step 4 — Update `docs/methodology.md`
+
+Add this section after the asset universe/static benchmark section:
+
+```markdown
+## Return calculation
+
+The processed dataset converts adjusted close prices into daily returns.
+
+The default return type is simple return:
+
+```text
+price_t / price_t-1 - 1
