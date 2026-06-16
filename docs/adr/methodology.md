@@ -192,3 +192,22 @@ The first set of visualizations includes:
 - Cumulative returns with regime background shading
 
 These plots help evaluate whether model-detected regimes align with visible changes in portfolio behavior.
+
+## Core risk metrics
+
+The project uses reusable risk metric functions to evaluate portfolios.
+
+The first metric layer includes:
+
+- Cumulative return
+- Annualized return
+- Annualized volatility
+- Sharpe ratio
+- Sortino ratio
+- Maximum drawdown
+- Historical VaR
+- Historical CVaR
+
+VaR and CVaR are reported as positive loss values.
+
+The default annualization factor is 252 trading days.
