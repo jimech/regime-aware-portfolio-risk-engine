@@ -9,6 +9,10 @@ from regime_risk_engine.reporting.cli_export import (
     CliReportExportError,
     export_report_from_files,
 )
+from regime_risk_engine.reporting.demo import (
+    DemoReportInputError,
+    create_demo_report_inputs,
+)
 
 
 class CliError(ValueError):
@@ -88,6 +92,23 @@ def build_parser() -> argparse.ArgumentParser:
         help="Print export result as JSON.",
     )
     export_report_parser.set_defaults(handler=_handle_export_report)
+
+    demo_parser = subparsers.add_parser(
+        "create-demo-report-inputs",
+        help="Create demo CSV tables and PNG figures for report export.",
+    )
+    demo_parser.add_argument(
+        "--output-dir",
+        type=Path,
+        required=True,
+        help="Directory where demo report inputs will be written.",
+    )
+    demo_parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Print generated paths as JSON.",
+    )
+    demo_parser.set_defaults(handler=_handle_create_demo_report_inputs)
 
     return parser
 
@@ -174,6 +195,36 @@ def _handle_export_report(args: argparse.Namespace) -> int:
         print(f"- output_dir: {result.output_dir}")
         print(f"- markdown_path: {result.markdown_path}")
         print(f"- manifest_path: {result.manifest_path}")
+        print(f"- tables: {len(result.table_paths)}")
+        print(f"- figures: {len(result.figure_paths)}")
+
+    return 0
+
+
+def _handle_create_demo_report_inputs(args: argparse.Namespace) -> int:
+    output_dir = args.output_dir
+    as_json = bool(getattr(args, "json", False))
+
+    try:
+        result = create_demo_report_inputs(output_dir=output_dir)
+    except DemoReportInputError as error:
+        raise CliError(str(error)) from error
+
+    demo_result = {
+        "output_dir": str(result.output_dir),
+        "tables": {
+            name: str(path) for name, path in sorted(result.table_paths.items())
+        },
+        "figures": {
+            name: str(path) for name, path in sorted(result.figure_paths.items())
+        },
+    }
+
+    if as_json:
+        print(json.dumps(demo_result, indent=2, sort_keys=True))
+    else:
+        print("Demo report inputs created")
+        print(f"- output_dir: {result.output_dir}")
         print(f"- tables: {len(result.table_paths)}")
         print(f"- figures: {len(result.figure_paths)}")
 
