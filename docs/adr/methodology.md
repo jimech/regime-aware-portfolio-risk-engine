@@ -96,3 +96,28 @@ The default windows are:
 These approximate one month, one quarter, half a year, and one trading year.
 
 Rolling features are calculated independently by ticker and use historical observations only.
+
+
+---
+
+## Step 4 — Update `docs/methodology.md`
+
+Add this section:
+
+```markdown
+## Momentum and trend features
+
+The second feature engineering layer calculates momentum, moving-average distance, and drawdown.
+
+Momentum measures cumulative simple return over a lookback window.
+
+Moving-average distance measures whether an asset is trading above or below its recent return-index trend.
+
+Drawdown measures the decline from the asset's running peak return index.
+
+These features help identify market environments such as:
+
+- Positive-trend bull markets
+- Negative-momentum bear markets
+- Recovery periods
+- Drawdown and stress regimes

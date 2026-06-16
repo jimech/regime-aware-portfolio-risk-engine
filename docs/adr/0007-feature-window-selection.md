@@ -19,3 +19,13 @@ short: 21 trading days
 medium: 63 trading days
 long: 126 trading days
 annual: 252 trading days
+
+## Momentum and trend features
+
+The same default windows are used for momentum and moving-average distance features:
+
+```text
+short: 21 trading days
+medium: 63 trading days
+long: 126 trading days
+annual: 252 trading days
