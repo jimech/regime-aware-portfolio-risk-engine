@@ -1,5 +1,8 @@
 # Regime-Aware Portfolio Risk Engine
 
+[![CI](https://github.com/jimech/regime-aware-portfolio-risk-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/jimech/regime-aware-portfolio-risk-engine/actions/workflows/ci.yml)
+
+
 A finance and machine learning project for detecting market regimes and comparing a static portfolio against a dynamic regime-aware allocation strategy.
 
 ## Project objective
