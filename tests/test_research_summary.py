@@ -128,8 +128,8 @@ def test_build_strategy_research_summary() -> None:
     assert summary.benchmark_strategy == "static"
     assert summary.candidate_strategy == "dynamic"
     assert summary.total_metric_count == 4
-    assert summary.favorable_metric_count == 3
-    assert summary.unfavorable_metric_count == 1
+    assert summary.favorable_metric_count == 4
+    assert summary.unfavorable_metric_count == 0
     assert "broad improvement" in summary.overall_verdict
     assert len(summary.metric_assessments) == 4
 
@@ -144,8 +144,26 @@ def test_strategy_research_summary_marks_lower_risk_as_favorable() -> None:
     assert bool(volatility_row["is_favorable"]) is True
 
 
-def test_strategy_research_summary_marks_worse_drawdown_as_unfavorable() -> None:
+def test_strategy_research_summary_marks_smaller_drawdown_as_favorable() -> None:
     summary = build_strategy_research_summary(make_metric_delta_table())
+
+    drawdown_row = summary.metric_assessments[
+        summary.metric_assessments["metric"] == "max_drawdown"
+    ].iloc[0]
+
+    assert bool(drawdown_row["is_favorable"]) is True
+
+
+def test_strategy_research_summary_marks_larger_drawdown_as_unfavorable() -> None:
+    metric_delta_table = make_metric_delta_table()
+    drawdown_mask = metric_delta_table["metric"] == "max_drawdown"
+
+    metric_delta_table.loc[drawdown_mask, "benchmark_value"] = -0.18
+    metric_delta_table.loc[drawdown_mask, "candidate_value"] = -0.25
+    metric_delta_table.loc[drawdown_mask, "absolute_delta"] = -0.07
+    metric_delta_table.loc[drawdown_mask, "relative_delta"] = -0.3889
+
+    summary = build_strategy_research_summary(metric_delta_table)
 
     drawdown_row = summary.metric_assessments[
         summary.metric_assessments["metric"] == "max_drawdown"

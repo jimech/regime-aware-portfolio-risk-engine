@@ -58,12 +58,15 @@ RISK_ADJUSTED_METRICS = {
 LOWER_IS_BETTER_METRICS = {
     "annualized_volatility",
     "volatility",
-    "max_drawdown",
-    "var",
-    "cvar",
     "turnover",
     "transaction_cost",
     "transaction_costs",
+}
+
+HIGHER_IS_BETTER_LOSS_METRICS = {
+    "max_drawdown",
+    "var",
+    "cvar",
 }
 
 REQUIRED_DELTA_COLUMNS = {
@@ -205,16 +208,12 @@ def build_regime_research_summary(
     summary["absolute_delta"] = summary["candidate_value"] - summary["benchmark_value"]
     summary["is_favorable"] = summary["absolute_delta"] > 0
 
-    if summary.empty:
-        best_regime = None
-        worst_regime = None
-    else:
-        best_regime = int(
-            summary.sort_values("absolute_delta", ascending=False).iloc[0]["regime"]
-        )
-        worst_regime = int(
-            summary.sort_values("absolute_delta", ascending=True).iloc[0]["regime"]
-        )
+    best_regime = int(
+        summary.sort_values("absolute_delta", ascending=False).iloc[0]["regime"]
+    )
+    worst_regime = int(
+        summary.sort_values("absolute_delta", ascending=True).iloc[0]["regime"]
+    )
 
     conclusion = _build_regime_conclusion(
         candidate_strategy=clean_candidate,
@@ -283,6 +282,9 @@ def _is_metric_delta_favorable(metric: str, absolute_delta: float) -> bool:
     if clean_metric in LOWER_IS_BETTER_METRICS:
         return absolute_delta < 0
 
+    if clean_metric in HIGHER_IS_BETTER_LOSS_METRICS:
+        return absolute_delta > 0
+
     if clean_metric in RETURN_METRICS:
         return absolute_delta > 0
 
@@ -297,10 +299,10 @@ def _interpret_metric_delta(
     absolute_delta: float,
     is_favorable: bool,
 ) -> str:
-    direction = "improved" if is_favorable else "deteriorated"
-
     if absolute_delta == 0:
         return f"{metric_label} was unchanged versus the benchmark."
+
+    direction = "improved" if is_favorable else "deteriorated"
 
     return f"{metric_label} {direction} versus the benchmark by {absolute_delta:.4f}."
 
