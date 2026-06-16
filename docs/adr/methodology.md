@@ -211,3 +211,16 @@ The first metric layer includes:
 VaR and CVaR are reported as positive loss values.
 
 The default annualization factor is 252 trading days.
+
+## Regime-specific risk analytics
+
+After regimes are detected, the project calculates risk metrics within each regime.
+
+The first regime-specific analytics layer includes:
+
+- Portfolio-level risk summary by regime
+- Asset-level risk summary by regime
+- Equal-weight portfolio returns
+- Custom weighted portfolio returns
+
+This helps identify how return, volatility, drawdown, VaR, CVaR, and risk-adjusted performance change across market environments.

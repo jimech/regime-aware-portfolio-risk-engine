@@ -38,3 +38,20 @@ Metric definitions are centralized and reusable.
 This reduces the risk of inconsistent calculations across the project.
 
 Historical VaR and CVaR are simple and transparent, but they depend heavily on the observed return sample and do not assume a parametric return distribution.
+
+## Regime-specific risk summaries
+
+Risk metrics are also calculated within each detected regime.
+
+The project supports both portfolio-level and asset-level regime risk summaries.
+
+Portfolio returns can be calculated using equal weights or explicit user-provided weights.
+
+Returns and regime labels are aligned by date before metrics are calculated.
+
+This allows the project to answer questions such as:
+
+- Which regimes have the highest volatility?
+- Which regimes have the worst drawdowns?
+- Which assets perform best or worst in each regime?
+- Does tail risk increase during specific regimes?
