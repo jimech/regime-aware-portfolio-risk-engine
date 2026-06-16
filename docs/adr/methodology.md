@@ -380,3 +380,19 @@ The first stability diagnostics include:
 Because regime detection is unsupervised, labels can be arbitrary. For that reason, the project uses label-invariant agreement metrics such as Adjusted Rand Index and normalized mutual information.
 
 These diagnostics help evaluate whether detected regimes are stable enough to support regime-aware allocation decisions.
+
+## Walk-forward regime validation
+
+The validation layer includes walk-forward validation for regime detection models.
+
+For each chronological split, the project fits a fresh model on train features and predicts regimes on both train and test features.
+
+The validation output includes:
+
+- Predicted train and test regime labels
+- Regime counts by split
+- Transition rates by split
+- Dominant regime share
+- Internal clustering diagnostics such as silhouette score and Calinski-Harabasz score
+
+This reduces look-ahead leakage and helps evaluate whether regime model outputs are stable across time.
