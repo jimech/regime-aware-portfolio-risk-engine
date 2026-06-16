@@ -60,11 +60,6 @@ Warnings represent issues that may be acceptable in some research contexts but s
 
 ---
 
-## Step 4 — Update `docs/methodology.md`
-
-Add this section after the asset universe/static benchmark section:
-
-```markdown
 ## Return calculation
 
 The processed dataset converts adjusted close prices into daily returns.
@@ -77,11 +72,7 @@ price_t / price_t-1 - 1
 
 ---
 
-## Step 5 — Update `docs/methodology.md`
 
-Add:
-
-```markdown
 ## Rolling return and volatility features
 
 The first feature engineering layer calculates rolling cumulative simple returns and annualized rolling volatility.
@@ -100,11 +91,7 @@ Rolling features are calculated independently by ticker and use historical obser
 
 ---
 
-## Step 4 — Update `docs/methodology.md`
 
-Add this section:
-
-```markdown
 ## Momentum and trend features
 
 The second feature engineering layer calculates momentum, moving-average distance, and drawdown.
@@ -125,9 +112,6 @@ These features help identify market environments such as:
 
 ---
 
-## Step 4 — Update `docs/methodology.md`
-
-Add:
 
 ```markdown
 ## Correlation and diversification features
@@ -146,3 +130,15 @@ These features help identify diversification stress.
 A rising average pairwise correlation may indicate that assets are moving together more closely, which can reduce diversification benefits during market stress.
 
 Equity-bond correlation is tracked because the relationship between stocks and bonds can change across inflation, growth, and crisis regimes.
+
+
+---
+
+## Regime feature matrix
+
+The feature matrix combines asset-level and date-level features into one model-ready dataset.
+
+Asset-level features are pivoted into wide format using the naming pattern:
+
+```text
+feature_name__TICKER

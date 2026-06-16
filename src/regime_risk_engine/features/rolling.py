@@ -35,11 +35,13 @@ def calculate_rolling_returns(
     for window_name, window_size in selected_windows.items():
         feature_name = f"rolling_return_{window_name}_{window_size}d"
         result[feature_name] = grouped_returns.transform(
-            lambda series, size=window_size: series.rolling(size).apply(
-                _compound_simple_returns,
-                raw=True,
+            lambda series, size=window_size: (
+                series.rolling(size).apply(
+                    _compound_simple_returns,
+                    raw=True,
+                )
+                - 1.0
             )
-            - 1.0
         )
 
     return result
@@ -66,8 +68,9 @@ def calculate_rolling_volatility(
     for window_name, window_size in selected_windows.items():
         feature_name = f"rolling_volatility_{window_name}_{window_size}d"
         result[feature_name] = grouped_returns.transform(
-            lambda series, size=window_size: series.rolling(size).std()
-            * annualization_factor**0.5
+            lambda series, size=window_size: (
+                series.rolling(size).std() * annualization_factor**0.5
+            )
         )
 
     return result
