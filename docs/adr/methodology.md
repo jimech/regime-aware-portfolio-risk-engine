@@ -224,3 +224,17 @@ The first regime-specific analytics layer includes:
 - Custom weighted portfolio returns
 
 This helps identify how return, volatility, drawdown, VaR, CVaR, and risk-adjusted performance change across market environments.
+
+## Regime correlation and covariance analytics
+
+The project calculates correlation and covariance matrices within each detected regime.
+
+This helps evaluate whether diversification behaves differently across market environments.
+
+The regime correlation layer includes:
+
+- Correlation matrix by regime
+- Annualized covariance matrix by regime
+- Average pairwise correlation by regime
+
+These diagnostics help explain why portfolio volatility and drawdown risk may change across regimes.
