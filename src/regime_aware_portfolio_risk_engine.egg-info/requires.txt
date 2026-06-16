@@ -4,6 +4,7 @@ scikit-learn
 scipy
 matplotlib
 pyyaml
+yfinance
 
 [dev]
 pytest

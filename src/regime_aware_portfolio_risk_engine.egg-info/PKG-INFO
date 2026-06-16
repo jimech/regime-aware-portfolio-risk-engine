@@ -11,6 +11,7 @@ Requires-Dist: scikit-learn
 Requires-Dist: scipy
 Requires-Dist: matplotlib
 Requires-Dist: pyyaml
+Requires-Dist: yfinance
 Provides-Extra: dev
 Requires-Dist: pytest; extra == "dev"
 Requires-Dist: ruff; extra == "dev"

@@ -7,5 +7,11 @@ src/regime_aware_portfolio_risk_engine.egg-info/requires.txt
 src/regime_aware_portfolio_risk_engine.egg-info/top_level.txt
 src/regime_risk_engine/__init__.py
 src/regime_risk_engine/config.py
+src/regime_risk_engine/data/__init__.py
+src/regime_risk_engine/data/download.py
+src/regime_risk_engine/data/storage.py
+src/regime_risk_engine/data/universe.py
 tests/test_config.py
+tests/test_download.py
 tests/test_package_import.py
+tests/test_universe.py
