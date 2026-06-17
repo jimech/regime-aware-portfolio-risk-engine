@@ -615,3 +615,13 @@ The workflow trains regime-specific optimized weights on historical training win
 This reduces in-sample bias compared with optimizing regime portfolios over the full dataset.
 
 The current implementation evaluates out-of-sample allocation weights conditional on regime labels. Future work can extend the design to retrain the regime detection model itself inside each walk-forward window.
+
+## Stress-period analysis
+
+The research layer includes stress-period strategy analysis.
+
+The stress-testing module compares the dynamic strategy against the static benchmark across named market stress windows.
+
+For each stress period, the module calculates cumulative return, max drawdown, volatility, Sharpe ratio, strategy deltas, dominant regime, and a capital-protection assessment.
+
+This helps evaluate whether the regime-aware strategy improves portfolio behavior during difficult market environments.
