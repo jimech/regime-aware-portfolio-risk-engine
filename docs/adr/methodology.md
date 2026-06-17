@@ -625,3 +625,33 @@ The stress-testing module compares the dynamic strategy against the static bench
 For each stress period, the module calculates cumulative return, max drawdown, volatility, Sharpe ratio, strategy deltas, dominant regime, and a capital-protection assessment.
 
 This helps evaluate whether the regime-aware strategy improves portfolio behavior during difficult market environments.
+
+## Strategy attribution analysis
+
+The research layer includes strategy attribution analysis.
+
+The attribution module decomposes dynamic-versus-static performance into asset-level active return contributions.
+
+When regime labels are available, it also summarizes which regimes contributed most positively or negatively to dynamic strategy performance.
+
+This helps explain why the regime-aware strategy outperformed or underperformed the static benchmark.
+
+## Factor exposure analysis
+
+The research layer includes factor exposure analysis.
+
+The factor exposure module estimates strategy betas to supplied factor return series using linear regression.
+
+It reports alpha, annualized alpha, factor betas, R-squared, residual volatility, and dominant factor exposures.
+
+When regime labels are supplied, the module also estimates regime-conditioned factor exposures.
+
+This helps explain whether dynamic strategy performance is driven by equity, defensive, real-asset, credit, or other risk exposures.
+
+## Regime transition analysis
+
+The research layer includes regime transition analysis.
+
+The transition module estimates transition counts, transition probabilities, regime persistence, expected duration, consecutive duration blocks, and most likely next regime.
+
+This helps evaluate whether detected regimes are stable enough to support dynamic allocation decisions.

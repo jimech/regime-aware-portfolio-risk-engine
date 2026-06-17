@@ -305,13 +305,12 @@ def _calculate_average_correlation(regime_returns: pd.DataFrame) -> float:
     correlation_matrix = regime_returns.corr().to_numpy(dtype=float)
     mask = ~np.eye(correlation_matrix.shape[0], dtype=bool)
     values = correlation_matrix[mask]
+    valid_values = values[~np.isnan(values)]
 
-    average_correlation = float(np.nanmean(values))
-
-    if np.isnan(average_correlation):
+    if valid_values.size == 0:
         return 0.0
 
-    return average_correlation
+    return float(np.mean(valid_values))
 
 
 def _calculate_role_return(
