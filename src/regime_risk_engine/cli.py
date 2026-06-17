@@ -26,6 +26,11 @@ from regime_risk_engine.research.advanced_cli_export import (
     export_advanced_research_from_files,
     format_advanced_export_result,
 )
+from regime_risk_engine.research.advanced_demo import (
+    AdvancedResearchDemoInputError,
+    create_advanced_research_demo_inputs,
+    format_advanced_demo_input_result,
+)
 
 
 class CliError(ValueError):
@@ -231,7 +236,34 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Fail if export files already exist.",
     )
-    advanced_export_parser.set_defaults(handler=_handle_export_advanced_research)
+    advanced_export_parser.set_defaults(
+        handler=_handle_export_advanced_research,
+        parser=advanced_export_parser,
+    )
+
+    advanced_demo_parser = subparsers.add_parser(
+        "create-advanced-demo-inputs",
+        help="Create demo CSV inputs for the advanced research workflow.",
+    )
+    advanced_demo_parser.add_argument(
+        "--output-dir",
+        required=True,
+        help="Directory where advanced demo input CSV files should be written.",
+    )
+    advanced_demo_parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Emit created advanced demo input paths as JSON.",
+    )
+    advanced_demo_parser.add_argument(
+        "--no-overwrite",
+        action="store_true",
+        help="Fail if demo input files already exist.",
+    )
+    advanced_demo_parser.set_defaults(
+        handler=_handle_create_advanced_demo_inputs,
+        parser=advanced_demo_parser,
+    )
 
     return parser
 
@@ -432,6 +464,20 @@ def _handle_export_advanced_research(args: argparse.Namespace) -> int:
         return 1
 
     print(format_advanced_export_result(result))
+    return 0
+
+
+def _handle_create_advanced_demo_inputs(args: argparse.Namespace) -> int:
+    try:
+        result = create_advanced_research_demo_inputs(
+            output_dir=args.output_dir,
+            overwrite=not args.no_overwrite,
+        )
+    except AdvancedResearchDemoInputError as exc:
+        print(f"Advanced demo input creation failed: {exc}")
+        return 1
+
+    print(format_advanced_demo_input_result(result))
     return 0
 
 

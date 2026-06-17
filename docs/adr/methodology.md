@@ -683,3 +683,11 @@ The research layer includes an advanced demo input generator.
 The generator creates deterministic CSV inputs for the advanced research export workflow, including price data, static weights, regime policy, stress periods, and factor returns.
 
 This makes the full advanced research workflow easier to demonstrate and test end to end.
+
+## Advanced demo CLI
+
+The CLI includes a command for creating deterministic advanced demo inputs.
+
+This command writes price data, static weights, regime policy, stress periods, and factor returns to disk.
+
+The generated files can be passed directly into the advanced research export command.
