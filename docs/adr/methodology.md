@@ -605,3 +605,13 @@ The workflow first detects market regimes, then uses regime-conditioned asset re
 Those optimized weights are converted into a dynamic allocation policy and passed back through the market research workflow.
 
 This allows the project to compare a static benchmark against a dynamic strategy whose regime weights are learned from historical market behavior.
+
+## Walk-forward regime optimization
+
+The research layer includes a walk-forward regime optimization workflow.
+
+The workflow trains regime-specific optimized weights on historical training windows and applies those weights to future test windows.
+
+This reduces in-sample bias compared with optimizing regime portfolios over the full dataset.
+
+The current implementation evaluates out-of-sample allocation weights conditional on regime labels. Future work can extend the design to retrain the regime detection model itself inside each walk-forward window.
