@@ -569,3 +569,39 @@ The research layer includes a Markdown memo builder for market research workflow
 The memo converts strategy comparisons, regime findings, allocation profiles, and executive summaries into a human-readable investment research document.
 
 This helps connect the quantitative engine to portfolio-manager-style decision review.
+
+## Regime intelligence
+
+The research layer includes a regime intelligence module that converts numeric regime labels into interpretable market states.
+
+Each regime is profiled using return, volatility, drawdown, correlation, and asset leadership diagnostics.
+
+The first regime intelligence layer assigns labels such as:
+
+- Growth / risk-on
+- Defensive / stress
+- Inflation / real assets
+- Low-volatility grind
+- Mixed / transition
+
+This helps connect machine-learning regime detection to economic market interpretation.
+
+## Regime-aware portfolio optimizer
+
+The research layer includes a regime-aware portfolio optimizer.
+
+The optimizer estimates one constrained portfolio per detected regime using regime-conditioned asset returns.
+
+The objective rewards expected return and penalizes annualized variance, historical CVaR, and turnover away from a benchmark portfolio.
+
+This allows the project to learn dynamic allocation policies from historical regime behavior rather than relying only on manually specified regime weights.
+
+## Optimized market research workflow
+
+The research layer includes an optimized market research workflow.
+
+The workflow first detects market regimes, then uses regime-conditioned asset returns to estimate optimized portfolio weights for each regime.
+
+Those optimized weights are converted into a dynamic allocation policy and passed back through the market research workflow.
+
+This allows the project to compare a static benchmark against a dynamic strategy whose regime weights are learned from historical market behavior.

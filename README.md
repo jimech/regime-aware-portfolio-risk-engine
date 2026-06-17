@@ -5,6 +5,7 @@
 
 A finance and machine learning project for detecting market regimes and comparing a static portfolio against a dynamic regime-aware allocation strategy.
 
+
 ## Project objective
 
 This project investigates whether portfolio risk changes across market regimes and whether allocation decisions can be improved by adapting to those regimes.
