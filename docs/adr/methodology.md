@@ -561,3 +561,11 @@ The workflow starts from long-format market price data and produces returns, reg
 Dynamic regime-aware weights are shifted by one period before being applied to returns to reduce look-ahead bias.
 
 The initial workflow uses rolling means, rolling volatilities, and average rolling correlation as regime detection features.
+
+## Market research memo
+
+The research layer includes a Markdown memo builder for market research workflow outputs.
+
+The memo converts strategy comparisons, regime findings, allocation profiles, and executive summaries into a human-readable investment research document.
+
+This helps connect the quantitative engine to portfolio-manager-style decision review.

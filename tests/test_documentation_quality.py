@@ -1,6 +1,5 @@
 from pathlib import Path
 
-
 README_PATH = Path("README.md")
 QUALITY_CHECKLIST_PATH = Path("docs/quality-checklist.md")
 CI_WORKFLOW_PATH = Path(".github/workflows/ci.yml")

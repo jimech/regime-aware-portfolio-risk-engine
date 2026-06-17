@@ -106,4 +106,5 @@ The project uses semantic versioning guidance and a documented release checklist
 
 Before tagging a release, run the full local quality suite and confirm GitHub Actions passes.
 
+See [`docs/quality-checklist.md`](docs/quality-checklist.md) for the required local checks before opening a pull request.
 See [`docs/release-checklist.md`](docs/release-checklist.md) for the full release process.
