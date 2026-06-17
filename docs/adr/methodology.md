@@ -541,3 +541,23 @@ The first research summary layer interprets:
 - Executive summary language
 
 This layer helps connect the quantitative engine to portfolio-management conclusions.
+
+## Investment research pipeline
+
+The research layer includes a pipeline that connects quantitative outputs to investment interpretation.
+
+The pipeline consumes strategy comparison results and regime-conditioned evaluation results.
+
+It produces report-ready tables, strategy research conclusions, regime-level conclusions, and an executive investment summary.
+
+This creates a bridge between the backtesting engine and professional portfolio research reporting.
+
+## Market research workflow
+
+The research layer includes an end-to-end market research workflow.
+
+The workflow starts from long-format market price data and produces returns, regime labels, static and dynamic strategy backtests, regime-conditioned evaluations, and investment research summaries.
+
+Dynamic regime-aware weights are shifted by one period before being applied to returns to reduce look-ahead bias.
+
+The initial workflow uses rolling means, rolling volatilities, and average rolling correlation as regime detection features.
