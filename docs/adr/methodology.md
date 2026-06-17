@@ -655,3 +655,23 @@ The research layer includes regime transition analysis.
 The transition module estimates transition counts, transition probabilities, regime persistence, expected duration, consecutive duration blocks, and most likely next regime.
 
 This helps evaluate whether detected regimes are stable enough to support dynamic allocation decisions.
+
+## Regime scenario simulation
+
+The research layer includes regime scenario simulation.
+
+The simulator estimates transition probabilities from historical regime labels and simulates future regime paths.
+
+For each simulated regime state, the simulator samples historical strategy returns from observations assigned to that regime.
+
+The output summarizes simulated wealth paths, terminal return distributions, probability of loss, VaR, CVaR, and regime usage.
+
+This provides a forward-looking risk-management view of static and dynamic strategy behavior.
+
+## Advanced research memo
+
+The research layer includes an advanced memo builder.
+
+The advanced memo combines the base market research memo with regime intelligence, regime transition analysis, stress-period analysis, strategy attribution, factor exposure diagnostics, and forward regime scenario simulation.
+
+This creates an investment committee style research document that explains performance, risk, regime behavior, attribution, and forward-looking scenario outcomes.
