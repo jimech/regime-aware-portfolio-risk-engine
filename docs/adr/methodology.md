@@ -675,3 +675,11 @@ The research layer includes an advanced memo builder.
 The advanced memo combines the base market research memo with regime intelligence, regime transition analysis, stress-period analysis, strategy attribution, factor exposure diagnostics, and forward regime scenario simulation.
 
 This creates an investment committee style research document that explains performance, risk, regime behavior, attribution, and forward-looking scenario outcomes.
+
+## Advanced research demo inputs
+
+The research layer includes an advanced demo input generator.
+
+The generator creates deterministic CSV inputs for the advanced research export workflow, including price data, static weights, regime policy, stress periods, and factor returns.
+
+This makes the full advanced research workflow easier to demonstrate and test end to end.

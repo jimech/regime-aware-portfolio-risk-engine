@@ -1,8 +1,7 @@
 import argparse
 import json
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from pathlib import Path
-from typing import Any
 
 from regime_risk_engine import __version__
 from regime_risk_engine.cli_config import (
@@ -22,329 +21,419 @@ from regime_risk_engine.reporting.demo_workflow import (
     DemoReportWorkflowError,
     run_demo_report_workflow,
 )
+from regime_risk_engine.research.advanced_cli_export import (
+    AdvancedResearchCliExportError,
+    export_advanced_research_from_files,
+    format_advanced_export_result,
+)
 
 
 class CliError(ValueError):
-    """Raised when a CLI command cannot be executed."""
+    """Raised when CLI helper operations fail."""
 
 
 def build_parser() -> argparse.ArgumentParser:
-    """Build the command-line parser."""
     parser = argparse.ArgumentParser(
         prog="regime-risk-engine",
-        description="Regime-aware portfolio risk engine command-line interface.",
+        description="Regime-aware portfolio risk engine command line interface.",
     )
-    parser.add_argument(
-        "--version",
-        action="version",
-        version=f"regime-risk-engine {__version__}",
-    )
-
-    subparsers = parser.add_subparsers(
-        dest="command",
-        required=True,
-    )
+    subparsers = parser.add_subparsers(dest="command", required=True)
 
     version_parser = subparsers.add_parser(
         "version",
-        help="Print the package version.",
+        help="Show package version.",
     )
     version_parser.set_defaults(handler=_handle_version)
 
     healthcheck_parser = subparsers.add_parser(
         "healthcheck",
-        help="Run a basic project healthcheck.",
-    )
-    healthcheck_parser.add_argument(
-        "--output-dir",
-        type=Path,
-        default=None,
-        help="Optional output directory to validate or create.",
+        help="Run a basic CLI healthcheck.",
     )
     healthcheck_parser.add_argument(
         "--json",
         action="store_true",
-        help="Print healthcheck output as JSON.",
+        help="Emit healthcheck output as JSON.",
+    )
+    healthcheck_parser.add_argument(
+        "--output-dir",
+        help="Optional directory to create for CLI artifacts.",
     )
     healthcheck_parser.set_defaults(handler=_handle_healthcheck)
 
     inspect_config_parser = subparsers.add_parser(
         "inspect-config",
-        help="Inspect a YAML project config file.",
+        help="Inspect a project configuration file.",
     )
     inspect_config_parser.add_argument(
         "--config",
-        type=Path,
-        default=Path("configs/base.yaml"),
-        help="Path to the YAML config file.",
+        required=True,
+        help="Path to the YAML configuration file.",
     )
     inspect_config_parser.add_argument(
         "--json",
         action="store_true",
-        help="Print config inspection output as JSON.",
+        help="Emit config inspection result as JSON.",
     )
-    inspect_config_parser.set_defaults(handler=_handle_inspect_config)
+    inspect_config_parser.set_defaults(
+        handler=_handle_inspect_config,
+        parser=inspect_config_parser,
+    )
 
     export_report_parser = subparsers.add_parser(
         "export-report",
-        help="Export report-ready CSV tables and optional PNG figures.",
+        help="Export a Markdown research report from CSV inputs.",
     )
     export_report_parser.add_argument(
         "--output-dir",
-        type=Path,
         required=True,
-        help="Directory where report artifacts will be written.",
+        help="Directory where the report package should be written.",
     )
     export_report_parser.add_argument(
         "--table",
         action="append",
         default=[],
-        help="Named CSV table input in the format name=path.",
+        help="Named CSV table path in the form name=path. May be repeated.",
     )
     export_report_parser.add_argument(
         "--figure",
         action="append",
         default=[],
-        help="Named PNG figure input in the format name=path.",
+        help="Named PNG figure path in the form name=path. May be repeated.",
     )
     export_report_parser.add_argument(
         "--title",
-        default="Regime Risk Engine Report",
-        help="Report title used in the Markdown index.",
+        default="Regime-Aware Portfolio Risk Report",
+        help="Report title.",
     )
     export_report_parser.add_argument(
         "--json",
         action="store_true",
-        help="Print export result as JSON.",
+        help="Emit report export result as JSON.",
     )
-    export_report_parser.set_defaults(handler=_handle_export_report)
+    export_report_parser.set_defaults(
+        handler=_handle_export_report,
+        parser=export_report_parser,
+    )
 
-    demo_parser = subparsers.add_parser(
+    demo_inputs_parser = subparsers.add_parser(
         "create-demo-report-inputs",
-        help="Create demo CSV tables and PNG figures for report export.",
+        help="Create synthetic demo CSV inputs for report export.",
     )
-    demo_parser.add_argument(
+    demo_inputs_parser.add_argument(
         "--output-dir",
-        type=Path,
         required=True,
-        help="Directory where demo report inputs will be written.",
+        help="Directory where demo input CSV files should be written.",
     )
-    demo_parser.add_argument(
+    demo_inputs_parser.add_argument(
         "--json",
         action="store_true",
-        help="Print generated paths as JSON.",
+        help="Emit created input paths as JSON.",
     )
-    demo_parser.set_defaults(handler=_handle_create_demo_report_inputs)
+    demo_inputs_parser.set_defaults(handler=_handle_create_demo_report_inputs)
 
-    demo_workflow_parser = subparsers.add_parser(
+    demo_report_parser = subparsers.add_parser(
         "run-demo-report",
-        help="Create demo inputs and export a complete demo report.",
+        help="Create demo report inputs and export a demo Markdown report.",
     )
-    demo_workflow_parser.add_argument(
+    demo_report_parser.add_argument(
         "--output-dir",
-        type=Path,
         required=True,
-        help="Directory where demo workflow artifacts will be written.",
+        help="Directory where demo files should be written.",
     )
-    demo_workflow_parser.add_argument(
+    demo_report_parser.add_argument(
         "--title",
-        default="Demo Regime Risk Engine Report",
-        help="Report title used in the Markdown index.",
+        default="Regime-Aware Portfolio Risk Demo Report",
+        help="Demo report title.",
     )
-    demo_workflow_parser.add_argument(
+    demo_report_parser.add_argument(
         "--json",
         action="store_true",
-        help="Print generated paths as JSON.",
+        help="Emit demo workflow result as JSON.",
     )
-    demo_workflow_parser.set_defaults(handler=_handle_run_demo_report)
+    demo_report_parser.set_defaults(
+        handler=_handle_run_demo_report,
+        parser=demo_report_parser,
+    )
+
+    advanced_export_parser = subparsers.add_parser(
+        "export-advanced-research",
+        help="Run the advanced research workflow and export a research package.",
+    )
+    advanced_export_parser.add_argument(
+        "--price-data",
+        required=True,
+        help="CSV with date, ticker, and adjusted_close columns.",
+    )
+    advanced_export_parser.add_argument(
+        "--static-weights",
+        required=True,
+        help="CSV with ticker and weight columns.",
+    )
+    advanced_export_parser.add_argument(
+        "--output-dir",
+        required=True,
+        help="Directory where the advanced research package should be written.",
+    )
+    advanced_export_parser.add_argument(
+        "--regime-policy",
+        help="Optional CSV with regime, ticker, and weight columns.",
+    )
+    advanced_export_parser.add_argument(
+        "--stress-periods",
+        help="Optional CSV with name, start_date, and end_date columns.",
+    )
+    advanced_export_parser.add_argument(
+        "--factor-returns",
+        help="Optional CSV with date plus one or more factor return columns.",
+    )
+    advanced_export_parser.add_argument(
+        "--n-regimes",
+        type=int,
+        default=3,
+        help="Number of regimes to detect.",
+    )
+    advanced_export_parser.add_argument(
+        "--feature-window",
+        type=int,
+        default=21,
+        help="Rolling feature window used for regime detection.",
+    )
+    advanced_export_parser.add_argument(
+        "--transaction-cost-bps",
+        type=float,
+        default=5.0,
+        help="Transaction cost assumption in basis points.",
+    )
+    advanced_export_parser.add_argument(
+        "--random-state",
+        type=int,
+        default=42,
+        help="Random seed for reproducible modeling and simulation.",
+    )
+    advanced_export_parser.add_argument(
+        "--scenario-horizon",
+        type=int,
+        default=21,
+        help="Forward scenario simulation horizon.",
+    )
+    advanced_export_parser.add_argument(
+        "--scenario-simulations",
+        type=int,
+        default=1_000,
+        help="Number of forward scenario simulations.",
+    )
+    advanced_export_parser.add_argument(
+        "--analyst",
+        help="Optional analyst name.",
+    )
+    advanced_export_parser.add_argument(
+        "--no-overwrite",
+        action="store_true",
+        help="Fail if export files already exist.",
+    )
+    advanced_export_parser.set_defaults(handler=_handle_export_advanced_research)
 
     return parser
 
 
 def main(argv: Sequence[str] | None = None) -> int:
-    """Run the command-line interface."""
     parser = build_parser()
     args = parser.parse_args(argv)
+    handler = args.handler
 
-    handler = getattr(args, "handler", None)
+    typed_handler: Callable[[argparse.Namespace], int] = handler
 
-    if handler is None:
-        parser.print_help()
-        return 1
-
-    try:
-        return int(handler(args))
-    except CliError as error:
-        parser.exit(status=2, message=f"error: {error}\n")
+    return typed_handler(args)
 
 
-def _handle_version(args: argparse.Namespace) -> int:
-    _ = args
-
+def _handle_version(_args: argparse.Namespace) -> int:
     print(__version__)
+    return 0
+
+
+def _handle_healthcheck(_args: argparse.Namespace) -> int:
+    result = build_healthcheck_result(output_dir=_args.output_dir)
+
+    if _args.json:
+        print(json.dumps(result, sort_keys=True))
+        return 0
+
+    print("Regime Risk Engine healthcheck")
+
+    for key, value in result.items():
+        print(f"{key}: {value}")
 
     return 0
 
 
-def _handle_healthcheck(args: argparse.Namespace) -> int:
-    output_dir = getattr(args, "output_dir", None)
-    as_json = bool(getattr(args, "json", False))
+def build_healthcheck_result(
+    output_dir: str | Path | None = None,
+) -> dict[str, object]:
+    """Build a JSON-safe CLI healthcheck result."""
+    result: dict[str, object] = {
+        "package_version": __version__,
+        "import_ok": True,
+        "output_dir": None,
+    }
 
-    result = build_healthcheck_result(output_dir=output_dir)
+    if output_dir is None:
+        return result
 
-    if as_json:
-        print(json.dumps(result, indent=2, sort_keys=True))
-    else:
-        print("Regime Risk Engine healthcheck")
-        print(f"- package_version: {result['package_version']}")
-        print(f"- import_ok: {result['import_ok']}")
-        print(f"- working_directory: {result['working_directory']}")
+    clean_output_dir = Path(output_dir).expanduser().resolve()
 
-        if result["output_dir"] is not None:
-            print(f"- output_dir: {result['output_dir']}")
-            print(f"- output_dir_exists: {result['output_dir_exists']}")
+    if clean_output_dir.exists() and not clean_output_dir.is_dir():
+        raise CliError("Output path exists and is not a directory")
 
-    return 0
+    clean_output_dir.mkdir(parents=True, exist_ok=True)
+
+    result["output_dir"] = str(clean_output_dir)
+    result["output_dir_exists"] = clean_output_dir.exists()
+
+    return result
 
 
 def _handle_inspect_config(args: argparse.Namespace) -> int:
-    config_path = args.config
-    as_json = bool(getattr(args, "json", False))
-
     try:
-        result = inspect_config_file(config_path)
-    except CliConfigInspectionError as error:
-        raise CliError(str(error)) from error
+        result = inspect_config_file(args.config)
+    except CliConfigInspectionError as exc:
+        args.parser.error(str(exc))
 
-    if as_json:
-        print(json.dumps(result.to_dict(), indent=2, sort_keys=True))
-    else:
-        print(format_config_inspection(result))
+    if args.json:
+        print(json.dumps(result.to_dict(), sort_keys=True))
+        return 0
 
+    print(format_config_inspection(result))
     return 0
 
 
 def _handle_export_report(args: argparse.Namespace) -> int:
-    table_specs = list(getattr(args, "table", []))
-    figure_specs = list(getattr(args, "figure", []))
-    output_dir = args.output_dir
-    title = str(getattr(args, "title", "Regime Risk Engine Report"))
-    as_json = bool(getattr(args, "json", False))
+    if not args.table:
+        args.parser.error("At least one --table argument is required")
 
     try:
         result = export_report_from_files(
-            table_specs=table_specs,
-            figure_specs=figure_specs,
-            output_dir=output_dir,
-            title=title,
+            table_specs=args.table,
+            figure_specs=args.figure,
+            output_dir=args.output_dir,
+            title=args.title,
         )
-    except CliReportExportError as error:
-        raise CliError(str(error)) from error
+    except CliReportExportError as exc:
+        args.parser.error(str(exc))
 
-    export_result = {
-        "output_dir": str(result.output_dir),
-        "markdown_path": str(result.markdown_path),
-        "manifest_path": str(result.manifest_path),
-        "tables": {
-            name: str(path) for name, path in sorted(result.table_paths.items())
-        },
-        "figures": {
-            name: str(path) for name, path in sorted(result.figure_paths.items())
-        },
-    }
+    if args.json:
+        print(
+            json.dumps(
+                {
+                    "output_dir": str(result.output_dir),
+                    "tables": {
+                        name: str(path)
+                        for name, path in sorted(result.table_paths.items())
+                    },
+                    "figures": {
+                        name: str(path)
+                        for name, path in sorted(result.figure_paths.items())
+                    },
+                    "markdown_path": str(result.markdown_path),
+                    "manifest_path": str(result.manifest_path),
+                },
+                sort_keys=True,
+            )
+        )
+        return 0
 
-    if as_json:
-        print(json.dumps(export_result, indent=2, sort_keys=True))
-    else:
-        print("Report exported")
-        print(f"- output_dir: {result.output_dir}")
-        print(f"- markdown_path: {result.markdown_path}")
-        print(f"- manifest_path: {result.manifest_path}")
-        print(f"- tables: {len(result.table_paths)}")
-        print(f"- figures: {len(result.figure_paths)}")
-
+    print(f"Report exported successfully: {result.markdown_path}")
     return 0
 
 
 def _handle_create_demo_report_inputs(args: argparse.Namespace) -> int:
-    output_dir = args.output_dir
-    as_json = bool(getattr(args, "json", False))
-
     try:
-        result = create_demo_report_inputs(output_dir=output_dir)
-    except DemoReportInputError as error:
-        raise CliError(str(error)) from error
+        result = create_demo_report_inputs(args.output_dir)
+    except DemoReportInputError as exc:
+        print(f"Demo report input creation failed: {exc}")
+        return 1
 
-    demo_result = {
-        "output_dir": str(result.output_dir),
-        "tables": {
-            name: str(path) for name, path in sorted(result.table_paths.items())
-        },
-        "figures": {
-            name: str(path) for name, path in sorted(result.figure_paths.items())
-        },
-    }
+    if args.json:
+        print(
+            json.dumps(
+                {
+                    "output_dir": str(result.output_dir),
+                    "tables": {
+                        name: str(path)
+                        for name, path in sorted(result.table_paths.items())
+                    },
+                    "figures": {
+                        name: str(path)
+                        for name, path in sorted(result.figure_paths.items())
+                    },
+                },
+                sort_keys=True,
+            )
+        )
+        return 0
 
-    if as_json:
-        print(json.dumps(demo_result, indent=2, sort_keys=True))
-    else:
-        print("Demo report inputs created")
-        print(f"- output_dir: {result.output_dir}")
-        print(f"- tables: {len(result.table_paths)}")
-        print(f"- figures: {len(result.figure_paths)}")
+    print("Demo report inputs created successfully.")
+    print(f"Output directory: {result.output_dir}")
+
+    for name, path in sorted(result.table_paths.items()):
+        print(f"Table {name}: {path}")
+
+    for name, path in sorted(result.figure_paths.items()):
+        print(f"Figure {name}: {path}")
 
     return 0
 
 
 def _handle_run_demo_report(args: argparse.Namespace) -> int:
-    output_dir = args.output_dir
-    title = str(getattr(args, "title", "Demo Regime Risk Engine Report"))
-    as_json = bool(getattr(args, "json", False))
-
     try:
         result = run_demo_report_workflow(
-            output_dir=output_dir,
-            title=title,
+            output_dir=args.output_dir,
+            title=args.title,
         )
-    except DemoReportWorkflowError as error:
-        raise CliError(str(error)) from error
+    except DemoReportWorkflowError as exc:
+        args.parser.error(str(exc))
 
-    result_dict = result.to_dict()
+    if args.json:
+        print(json.dumps(result.to_dict(), sort_keys=True))
+        return 0
 
-    if as_json:
-        print(json.dumps(result_dict, indent=2, sort_keys=True))
-    else:
-        print("Demo report workflow completed")
-        print(f"- output_dir: {result.output_dir}")
-        print(f"- input_dir: {result.input_dir}")
-        print(f"- report_dir: {result.report_dir}")
-        print(f"- markdown_path: {result.markdown_path}")
-        print(f"- manifest_path: {result.manifest_path}")
-        print(f"- tables: {len(result.table_paths)}")
-        print(f"- figures: {len(result.figure_paths)}")
+    print("Demo report workflow completed successfully.")
+    print(f"Output directory: {result.output_dir}")
+    print(f"Report: {result.markdown_path}")
+
+    for name, path in sorted(result.table_paths.items()):
+        print(f"Table {name}: {path}")
+
+    for name, path in sorted(result.figure_paths.items()):
+        print(f"Figure {name}: {path}")
 
     return 0
 
 
-def build_healthcheck_result(output_dir: Path | None = None) -> dict[str, Any]:
-    """Build a basic CLI healthcheck result."""
-    result: dict[str, Any] = {
-        "package_version": __version__,
-        "import_ok": True,
-        "working_directory": str(Path.cwd()),
-        "output_dir": None,
-        "output_dir_exists": None,
-    }
+def _handle_export_advanced_research(args: argparse.Namespace) -> int:
+    try:
+        result = export_advanced_research_from_files(
+            price_data_path=args.price_data,
+            static_weights_path=args.static_weights,
+            regime_policy_path=args.regime_policy,
+            stress_periods_path=args.stress_periods,
+            factor_returns_path=args.factor_returns,
+            output_dir=args.output_dir,
+            n_regimes=args.n_regimes,
+            feature_window=args.feature_window,
+            transaction_cost_bps=args.transaction_cost_bps,
+            random_state=args.random_state,
+            scenario_horizon=args.scenario_horizon,
+            scenario_simulations=args.scenario_simulations,
+            analyst=args.analyst,
+            overwrite=not args.no_overwrite,
+        )
+    except AdvancedResearchCliExportError as exc:
+        print(f"Advanced research export failed: {exc}")
+        return 1
 
-    if output_dir is not None:
-        clean_output_dir = output_dir.expanduser().resolve()
+    print(format_advanced_export_result(result))
+    return 0
 
-        if clean_output_dir.exists() and not clean_output_dir.is_dir():
-            raise CliError("Output path exists and is not a directory")
 
-        clean_output_dir.mkdir(parents=True, exist_ok=True)
-
-        result["output_dir"] = str(clean_output_dir)
-        result["output_dir_exists"] = clean_output_dir.exists()
-
-    return result
+if __name__ == "__main__":
+    raise SystemExit(main())
