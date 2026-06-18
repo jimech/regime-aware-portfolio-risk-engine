@@ -485,6 +485,15 @@ pytest --cov=regime_risk_engine --cov-report=term-missing
 ```
 
 ---
+## Project Documentation
+
+- [Methodology](docs/methodology.md)
+- [CLI usage](docs/cli.md)
+- [Quality checklist](docs/quality-checklist.md)
+- [Release checklist](docs/release-checklist.md)
+- [Thesis analysis](docs/thesis-analysis.md)
+- [Architecture decision records](docs/adr/)
+---
 
 ## Design Principles
 
