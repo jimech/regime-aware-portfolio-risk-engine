@@ -1,9 +1,7 @@
+
 # Regime-Aware Portfolio Risk Engine
 
-[![CI](https://github.com/jimech/regime-aware-portfolio-risk-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/jimech/regime-aware-portfolio-risk-engine/actions/workflows/ci.yml)
-# Regime-Aware Portfolio Risk Engine
-
-[![CI](https://github.com/jimemettr/regime-aware-portfolio-risk-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/jimemettr/regime-aware-portfolio-risk-engine/actions/workflows/ci.yml)
+![CI](https://github.com/jimech/regime-aware-portfolio-risk-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/jimech/regime-aware-portfolio-risk-engine/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.12-blue)
 ![Tests](https://img.shields.io/badge/tests-pytest-green)
 ![Type Checking](https://img.shields.io/badge/type%20checking-mypy-blue)
