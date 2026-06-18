@@ -31,6 +31,11 @@ from regime_risk_engine.research.advanced_demo import (
     create_advanced_research_demo_inputs,
     format_advanced_demo_input_result,
 )
+from regime_risk_engine.research.advanced_demo_workflow import (
+    AdvancedResearchDemoWorkflowError,
+    format_advanced_demo_workflow_result,
+    run_advanced_research_demo_workflow,
+)
 
 
 class CliError(ValueError):
@@ -265,6 +270,70 @@ def build_parser() -> argparse.ArgumentParser:
         parser=advanced_demo_parser,
     )
 
+    advanced_demo_workflow_parser = subparsers.add_parser(
+        "run-advanced-demo",
+        help="Create demo inputs and export a full advanced research package.",
+    )
+    advanced_demo_workflow_parser.add_argument(
+        "--output-dir",
+        required=True,
+        help="Directory where advanced demo outputs should be written.",
+    )
+    advanced_demo_workflow_parser.add_argument(
+        "--n-regimes",
+        type=int,
+        default=3,
+        help="Number of regimes to detect.",
+    )
+    advanced_demo_workflow_parser.add_argument(
+        "--feature-window",
+        type=int,
+        default=10,
+        help="Rolling feature window used for regime detection.",
+    )
+    advanced_demo_workflow_parser.add_argument(
+        "--transaction-cost-bps",
+        type=float,
+        default=5.0,
+        help="Transaction cost assumption in basis points.",
+    )
+    advanced_demo_workflow_parser.add_argument(
+        "--random-state",
+        type=int,
+        default=42,
+        help="Random seed for reproducible modeling and simulation.",
+    )
+    advanced_demo_workflow_parser.add_argument(
+        "--scenario-horizon",
+        type=int,
+        default=21,
+        help="Forward scenario simulation horizon.",
+    )
+    advanced_demo_workflow_parser.add_argument(
+        "--scenario-simulations",
+        type=int,
+        default=1_000,
+        help="Number of forward scenario simulations.",
+    )
+    advanced_demo_workflow_parser.add_argument(
+        "--analyst",
+        help="Optional analyst name.",
+    )
+    advanced_demo_workflow_parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Emit advanced demo workflow result as JSON.",
+    )
+    advanced_demo_workflow_parser.add_argument(
+        "--no-overwrite",
+        action="store_true",
+        help="Fail if demo output files already exist.",
+    )
+    advanced_demo_workflow_parser.set_defaults(
+        handler=_handle_run_advanced_demo,
+        parser=advanced_demo_workflow_parser,
+    )
+
     return parser
 
 
@@ -477,7 +546,65 @@ def _handle_create_advanced_demo_inputs(args: argparse.Namespace) -> int:
         print(f"Advanced demo input creation failed: {exc}")
         return 1
 
+    if args.json:
+        print(
+            json.dumps(
+                {
+                    "output_dir": str(result.output_dir),
+                    "price_data_path": str(result.price_data_path),
+                    "static_weights_path": str(result.static_weights_path),
+                    "regime_policy_path": str(result.regime_policy_path),
+                    "stress_periods_path": str(result.stress_periods_path),
+                    "factor_returns_path": str(result.factor_returns_path),
+                },
+                sort_keys=True,
+            )
+        )
+        return 0
+
     print(format_advanced_demo_input_result(result))
+    return 0
+
+
+def _handle_run_advanced_demo(args: argparse.Namespace) -> int:
+    try:
+        result = run_advanced_research_demo_workflow(
+            output_dir=args.output_dir,
+            n_regimes=args.n_regimes,
+            feature_window=args.feature_window,
+            transaction_cost_bps=args.transaction_cost_bps,
+            random_state=args.random_state,
+            scenario_horizon=args.scenario_horizon,
+            scenario_simulations=args.scenario_simulations,
+            analyst=args.analyst,
+            overwrite=not args.no_overwrite,
+        )
+    except (AdvancedResearchDemoWorkflowError, ValueError) as exc:
+        print(f"Advanced demo workflow failed: {exc}")
+        return 1
+
+    if args.json:
+        print(
+            json.dumps(
+                {
+                    "output_dir": str(result.output_dir),
+                    "input_dir": str(result.input_result.output_dir),
+                    "package_dir": str(result.export_result.output_dir),
+                    "memo_path": str(result.export_result.memo_path),
+                    "exported_tables": {
+                        name: str(path)
+                        for name, path in sorted(
+                            result.export_result.exported_table_paths.items()
+                        )
+                    },
+                },
+                indent=2,
+                sort_keys=True,
+            )
+        )
+    else:
+        print(format_advanced_demo_workflow_result(result))
+
     return 0
 
 
