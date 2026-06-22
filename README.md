@@ -564,3 +564,10 @@ docs/examples/rolling_factor_exposure_example.md
 ## Disclaimer
 
 This repository is for educational and research purposes only. It is not financial advice, investment advice, or a recommendation to buy or sell any asset.
+
+## Rolling factor exposure example
+
+A rolling factor exposure example is available at:
+
+```text
+docs/examples/rolling_factor_exposure_example.md
