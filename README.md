@@ -542,7 +542,7 @@ Potential next improvements:
 
 * Add Hidden Markov Model regime detection.
 * Add macroeconomic factor inputs.
-* Add real historical crisis window presets.
+* Integrate historical crisis window presets into the advanced demo CLI.
 * Add rolling factor exposure analysis.
 * Add statistical significance tests for factor betas.
 * Add Brinson-style attribution.
