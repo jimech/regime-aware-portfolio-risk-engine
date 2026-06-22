@@ -165,7 +165,7 @@ def _validate_spec(spec: MacroFactorSpec) -> None:
         "log_difference",
     }:
         raise MacroFactorInputError(
-            "Unsupported macro factor transformation: " f"{spec.transformation}"
+            f"Unsupported macro factor transformation: {spec.transformation}"
         )
 
     if spec.fill_method not in {"ffill", "bfill", "none"}:
