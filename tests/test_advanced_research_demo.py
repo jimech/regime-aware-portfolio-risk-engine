@@ -9,6 +9,7 @@ from regime_risk_engine.research.advanced_cli_export import (
 from regime_risk_engine.research.advanced_demo import (
     AdvancedResearchDemoInputError,
     AdvancedResearchDemoInputResult,
+    create_advanced_demo_inputs,
     create_advanced_research_demo_inputs,
     format_advanced_demo_input_result,
 )
@@ -68,8 +69,8 @@ def test_demo_stress_periods_have_expected_columns(tmp_path: Path) -> None:
 
     stress_periods = pd.read_csv(result.stress_periods_path)
 
-    assert set(stress_periods.columns) == {"name", "start_date", "end_date"}
-    assert len(stress_periods) == 3
+    assert list(stress_periods.columns) == ["name", "start_date", "end_date"]
+    assert not stress_periods.empty
 
 
 def test_demo_factor_returns_have_expected_columns(tmp_path: Path) -> None:
@@ -130,3 +131,25 @@ def test_create_advanced_research_demo_inputs_rejects_file_output_path(
 
     with pytest.raises(AdvancedResearchDemoInputError, match="not a directory"):
         create_advanced_research_demo_inputs(output_path)
+
+
+def test_advanced_demo_stress_periods_use_crisis_window_presets(
+    tmp_path: Path,
+) -> None:
+    result = create_advanced_demo_inputs(tmp_path)
+
+    stress_periods = pd.read_csv(result.stress_periods_path)
+
+    assert list(stress_periods.columns) == ["name", "start_date", "end_date"]
+    assert "covid_crash" in set(stress_periods["name"])
+
+
+def test_advanced_demo_stress_period_dates_are_valid(tmp_path: Path) -> None:
+    result = create_advanced_demo_inputs(tmp_path)
+
+    stress_periods = pd.read_csv(result.stress_periods_path)
+
+    start_dates = pd.to_datetime(stress_periods["start_date"])
+    end_dates = pd.to_datetime(stress_periods["end_date"])
+
+    assert (end_dates >= start_dates).all()

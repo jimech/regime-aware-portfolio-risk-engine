@@ -1,7 +1,13 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 from pathlib import Path
 
 import pandas as pd
+
+from regime_risk_engine.research.crisis_windows import (
+    filter_crisis_windows_for_index,
+)
 
 
 class AdvancedResearchDemoInputError(ValueError):
@@ -47,13 +53,31 @@ def create_advanced_research_demo_inputs(
         overwrite=overwrite,
     )
 
-    _build_demo_price_data().to_csv(result.price_data_path, index=False)
-    _build_static_weights().to_csv(result.static_weights_path, index=False)
-    _build_regime_policy().to_csv(result.regime_policy_path, index=False)
-    _build_stress_periods().to_csv(result.stress_periods_path, index=False)
-    _build_factor_returns().to_csv(result.factor_returns_path, index=False)
+    price_data = _build_demo_price_data()
+    static_weights = _build_static_weights()
+    regime_policy = _build_regime_policy()
+    price_date_index = _extract_price_date_index(price_data)
+    stress_periods = _build_demo_stress_periods(price_date_index)
+    factor_returns = _build_factor_returns()
+
+    price_data.to_csv(result.price_data_path, index=False)
+    static_weights.to_csv(result.static_weights_path, index=False)
+    regime_policy.to_csv(result.regime_policy_path, index=False)
+    stress_periods.to_csv(result.stress_periods_path, index=False)
+    factor_returns.to_csv(result.factor_returns_path, index=False)
 
     return result
+
+
+def create_advanced_demo_inputs(
+    output_dir: str | Path,
+    overwrite: bool = True,
+) -> AdvancedResearchDemoInputResult:
+    """Create demo CSV inputs using the shorter public helper name."""
+    return create_advanced_research_demo_inputs(
+        output_dir=output_dir,
+        overwrite=overwrite,
+    )
 
 
 def format_advanced_demo_input_result(
@@ -171,26 +195,74 @@ def _build_regime_policy() -> pd.DataFrame:
     )
 
 
-def _build_stress_periods() -> pd.DataFrame:
-    return pd.DataFrame(
-        {
-            "name": [
-                "Growth expansion",
-                "Defensive drawdown",
-                "Inflation rotation",
-            ],
-            "start_date": [
-                "2020-01-02",
-                "2020-03-01",
-                "2020-04-30",
-            ],
-            "end_date": [
-                "2020-02-29",
-                "2020-04-29",
-                "2020-06-28",
-            ],
-        }
+def _extract_price_date_index(price_data: pd.DataFrame) -> pd.DatetimeIndex:
+    if "date" not in price_data.columns:
+        raise AdvancedResearchDemoInputError(
+            "Demo price data must contain a 'date' column."
+        )
+
+    dates = pd.to_datetime(
+        price_data["date"].drop_duplicates(),
+        errors="raise",
     )
+
+    if dates.empty:
+        raise AdvancedResearchDemoInputError(
+            "Demo price data must contain at least one date."
+        )
+
+    return pd.DatetimeIndex(dates)
+
+
+def _build_demo_stress_periods(price_index: pd.Index) -> pd.DataFrame:
+    """Build demo stress periods from historical crisis presets.
+
+    The advanced export workflow expects columns:
+    name, start_date, end_date.
+    """
+    crisis_windows = filter_crisis_windows_for_index(price_index)
+
+    if crisis_windows:
+        return pd.DataFrame(
+            [
+                {
+                    "name": window.name,
+                    "start_date": window.start_date,
+                    "end_date": window.end_date,
+                }
+                for window in crisis_windows
+            ],
+            columns=["name", "start_date", "end_date"],
+        )
+
+    date_index = pd.DatetimeIndex(price_index)
+
+    if date_index.empty:
+        raise AdvancedResearchDemoInputError(
+            "price_index must contain at least one date."
+        )
+
+    start = date_index[int(len(date_index) * 0.35)]
+    end = date_index[int(len(date_index) * 0.50)]
+
+    return pd.DataFrame(
+        [
+            {
+                "name": "demo_stress_window",
+                "start_date": start.strftime("%Y-%m-%d"),
+                "end_date": end.strftime("%Y-%m-%d"),
+            }
+        ],
+        columns=["name", "start_date", "end_date"],
+    )
+
+
+def _build_stress_periods() -> pd.DataFrame:
+    """Build stress periods for backward-compatible internal callers."""
+    price_data = _build_demo_price_data()
+    price_date_index = _extract_price_date_index(price_data)
+
+    return _build_demo_stress_periods(price_date_index)
 
 
 def _build_factor_returns() -> pd.DataFrame:
