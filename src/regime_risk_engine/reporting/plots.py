@@ -1,6 +1,5 @@
 from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import cast
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -44,7 +43,7 @@ def plot_strategy_cumulative_returns(
     ax.grid(True, alpha=0.3)
     fig.tight_layout()
 
-    return cast(Figure, fig)
+    return fig
 
 
 def plot_strategy_drawdowns(
@@ -71,7 +70,7 @@ def plot_strategy_drawdowns(
     ax.grid(True, alpha=0.3)
     fig.tight_layout()
 
-    return cast(Figure, fig)
+    return fig
 
 
 def plot_strategy_rolling_metric(
@@ -103,7 +102,7 @@ def plot_strategy_rolling_metric(
     ax.grid(True, alpha=0.3)
     fig.tight_layout()
 
-    return cast(Figure, fig)
+    return fig
 
 
 def plot_metric_delta_bars(
@@ -131,7 +130,7 @@ def plot_metric_delta_bars(
     ax.tick_params(axis="x", rotation=45)
     fig.tight_layout()
 
-    return cast(Figure, fig)
+    return fig
 
 
 def plot_model_ranking(
@@ -166,7 +165,7 @@ def plot_model_ranking(
     ax.tick_params(axis="x", rotation=45)
     fig.tight_layout()
 
-    return cast(Figure, fig)
+    return fig
 
 
 def build_report_figure_bundle(
