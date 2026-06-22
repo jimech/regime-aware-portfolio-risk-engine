@@ -36,6 +36,12 @@ from regime_risk_engine.research.advanced_demo_workflow import (
     format_advanced_demo_workflow_result,
     run_advanced_research_demo_workflow,
 )
+from regime_risk_engine.research.rolling_factor_exposure import (
+    RollingFactorExposureError,
+    read_rolling_factor_exposure_inputs,
+    summarize_rolling_factor_exposures,
+    write_rolling_factor_exposures_csv,
+)
 
 
 class CliError(ValueError):
@@ -354,6 +360,70 @@ def build_parser() -> argparse.ArgumentParser:
         parser=advanced_demo_workflow_parser,
     )
 
+    rolling_factor_parser = subparsers.add_parser(
+        "export-rolling-factor-exposure",
+        help="Export rolling factor exposure tables from strategy and factor returns.",
+    )
+    rolling_factor_parser.add_argument(
+        "--strategy-returns",
+        required=True,
+        help="CSV with date and strategy return columns.",
+    )
+    rolling_factor_parser.add_argument(
+        "--factor-returns",
+        required=True,
+        help="CSV with date plus one or more factor return columns.",
+    )
+    rolling_factor_parser.add_argument(
+        "--output-dir",
+        required=True,
+        help="Directory where rolling exposure CSV files should be written.",
+    )
+    rolling_factor_parser.add_argument(
+        "--return-column",
+        default="return",
+        help="Strategy return column name.",
+    )
+    rolling_factor_parser.add_argument(
+        "--date-column",
+        default="date",
+        help="Date column name shared by strategy and factor files.",
+    )
+    rolling_factor_parser.add_argument(
+        "--factor-column",
+        action="append",
+        default=None,
+        help=(
+            "Factor column to include. May be repeated. Defaults to all factor columns."
+        ),
+    )
+    rolling_factor_parser.add_argument(
+        "--window",
+        type=int,
+        default=60,
+        help="Rolling regression window.",
+    )
+    rolling_factor_parser.add_argument(
+        "--min-observations",
+        type=int,
+        default=None,
+        help="Minimum observations required per rolling window.",
+    )
+    rolling_factor_parser.add_argument(
+        "--no-intercept",
+        action="store_true",
+        help="Estimate rolling betas without an intercept.",
+    )
+    rolling_factor_parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Emit rolling factor exposure export result as JSON.",
+    )
+    rolling_factor_parser.set_defaults(
+        handler=_handle_export_rolling_factor_exposure,
+        parser=rolling_factor_parser,
+    )
+
     return parser
 
 
@@ -584,6 +654,54 @@ def _handle_create_advanced_demo_inputs(args: argparse.Namespace) -> int:
         return 0
 
     print(format_advanced_demo_input_result(result))
+    return 0
+
+
+def _handle_export_rolling_factor_exposure(args: argparse.Namespace) -> int:
+    output_dir = Path(args.output_dir).expanduser().resolve()
+    exposure_path = output_dir / "rolling_factor_exposures.csv"
+    summary_path = output_dir / "rolling_factor_exposure_summary.csv"
+
+    try:
+        result = read_rolling_factor_exposure_inputs(
+            strategy_returns_path=args.strategy_returns,
+            factor_returns_path=args.factor_returns,
+            return_column=args.return_column,
+            date_column=args.date_column,
+            factor_columns=args.factor_column,
+            window=args.window,
+            min_observations=args.min_observations,
+            include_intercept=not args.no_intercept,
+        )
+        write_rolling_factor_exposures_csv(exposure_path, result)
+        summary = summarize_rolling_factor_exposures(result)
+        output_dir.mkdir(parents=True, exist_ok=True)
+        summary.to_csv(summary_path, index=False)
+    except (RollingFactorExposureError, OSError) as exc:
+        print(f"Rolling factor exposure export failed: {exc}")
+        return 1
+
+    if args.json:
+        print(
+            json.dumps(
+                {
+                    "output_dir": str(output_dir),
+                    "rolling_factor_exposures_path": str(exposure_path),
+                    "rolling_factor_exposure_summary_path": str(summary_path),
+                    "factor_columns": list(result.factor_columns),
+                    "window": result.window,
+                    "min_observations": result.min_observations,
+                    "include_intercept": result.include_intercept,
+                },
+                sort_keys=True,
+            )
+        )
+        return 0
+
+    print("Rolling factor exposure exported successfully.")
+    print(f"Output directory: {output_dir}")
+    print(f"Rolling exposures: {exposure_path}")
+    print(f"Exposure summary: {summary_path}")
     return 0
 
 
