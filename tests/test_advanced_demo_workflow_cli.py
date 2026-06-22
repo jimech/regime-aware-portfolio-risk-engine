@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import pandas as pd
+
 from regime_risk_engine.cli import main
 
 
@@ -100,3 +102,35 @@ def test_cli_run_advanced_demo_respects_no_overwrite(
     assert second_exit_code == 1
     assert "Advanced demo workflow failed" in captured.out
     assert "overwrite=False" in captured.out
+
+
+def test_cli_run_advanced_demo_supports_synthetic_stress_period_mode(
+    tmp_path: Path,
+    capsys,
+) -> None:
+    output_dir = tmp_path / "advanced_demo"
+
+    exit_code = main(
+        [
+            "run-advanced-demo",
+            "--output-dir",
+            str(output_dir),
+            "--feature-window",
+            "10",
+            "--scenario-horizon",
+            "5",
+            "--scenario-simulations",
+            "25",
+            "--stress-period-mode",
+            "synthetic",
+        ]
+    )
+
+    captured = capsys.readouterr()
+
+    assert exit_code == 0
+    assert "Advanced demo workflow completed successfully" in captured.out
+
+    stress_periods = pd.read_csv(output_dir / "inputs" / "stress_periods.csv")
+
+    assert set(stress_periods["name"]) == {"demo_stress_window"}

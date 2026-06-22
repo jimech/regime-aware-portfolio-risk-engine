@@ -6,6 +6,7 @@ from regime_risk_engine.research.advanced_cli_export import (
 )
 from regime_risk_engine.research.advanced_demo import (
     AdvancedResearchDemoInputResult,
+    StressPeriodMode,
     create_advanced_research_demo_inputs,
 )
 from regime_risk_engine.research.advanced_export import AdvancedResearchExportResult
@@ -33,6 +34,7 @@ def run_advanced_research_demo_workflow(
     scenario_horizon: int = 21,
     scenario_simulations: int = 1_000,
     analyst: str | None = None,
+    stress_period_mode: StressPeriodMode = "crisis",
     overwrite: bool = True,
 ) -> AdvancedResearchDemoWorkflowResult:
     """Create demo inputs and export a full advanced research package."""
@@ -44,6 +46,7 @@ def run_advanced_research_demo_workflow(
     input_result = create_advanced_research_demo_inputs(
         output_dir=input_dir,
         overwrite=overwrite,
+        stress_period_mode=stress_period_mode,
     )
 
     export_result = export_advanced_research_from_files(

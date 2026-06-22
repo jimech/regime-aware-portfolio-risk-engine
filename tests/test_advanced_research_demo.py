@@ -153,3 +153,30 @@ def test_advanced_demo_stress_period_dates_are_valid(tmp_path: Path) -> None:
     end_dates = pd.to_datetime(stress_periods["end_date"])
 
     assert (end_dates >= start_dates).all()
+
+
+def test_advanced_demo_can_use_synthetic_stress_period_mode(
+    tmp_path: Path,
+) -> None:
+    result = create_advanced_demo_inputs(
+        tmp_path,
+        stress_period_mode="synthetic",
+    )
+
+    stress_periods = pd.read_csv(result.stress_periods_path)
+
+    assert list(stress_periods.columns) == ["name", "start_date", "end_date"]
+    assert set(stress_periods["name"]) == {"demo_stress_window"}
+
+
+def test_advanced_demo_rejects_unknown_stress_period_mode(
+    tmp_path: Path,
+) -> None:
+    with pytest.raises(
+        AdvancedResearchDemoInputError,
+        match="stress_period_mode must be either",
+    ):
+        create_advanced_demo_inputs(
+            tmp_path,
+            stress_period_mode="unknown",  # type: ignore[arg-type]
+        )

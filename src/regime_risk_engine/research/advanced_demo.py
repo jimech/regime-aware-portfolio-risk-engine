@@ -2,12 +2,15 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Literal
 
 import pandas as pd
 
 from regime_risk_engine.research.crisis_windows import (
     filter_crisis_windows_for_index,
 )
+
+StressPeriodMode = Literal["crisis", "synthetic"]
 
 
 class AdvancedResearchDemoInputError(ValueError):
@@ -29,6 +32,7 @@ class AdvancedResearchDemoInputResult:
 def create_advanced_research_demo_inputs(
     output_dir: str | Path,
     overwrite: bool = True,
+    stress_period_mode: StressPeriodMode = "crisis",
 ) -> AdvancedResearchDemoInputResult:
     """Create demo CSV inputs for the advanced research export workflow."""
     clean_output_dir = _prepare_output_dir(output_dir)
@@ -57,7 +61,10 @@ def create_advanced_research_demo_inputs(
     static_weights = _build_static_weights()
     regime_policy = _build_regime_policy()
     price_date_index = _extract_price_date_index(price_data)
-    stress_periods = _build_demo_stress_periods(price_date_index)
+    stress_periods = _build_demo_stress_periods(
+        price_date_index,
+        stress_period_mode=stress_period_mode,
+    )
     factor_returns = _build_factor_returns()
 
     price_data.to_csv(result.price_data_path, index=False)
@@ -72,11 +79,13 @@ def create_advanced_research_demo_inputs(
 def create_advanced_demo_inputs(
     output_dir: str | Path,
     overwrite: bool = True,
+    stress_period_mode: StressPeriodMode = "crisis",
 ) -> AdvancedResearchDemoInputResult:
     """Create demo CSV inputs using the shorter public helper name."""
     return create_advanced_research_demo_inputs(
         output_dir=output_dir,
         overwrite=overwrite,
+        stress_period_mode=stress_period_mode,
     )
 
 
@@ -214,12 +223,23 @@ def _extract_price_date_index(price_data: pd.DataFrame) -> pd.DatetimeIndex:
     return pd.DatetimeIndex(dates)
 
 
-def _build_demo_stress_periods(price_index: pd.Index) -> pd.DataFrame:
-    """Build demo stress periods from historical crisis presets.
+def _build_demo_stress_periods(
+    price_index: pd.Index,
+    stress_period_mode: StressPeriodMode = "crisis",
+) -> pd.DataFrame:
+    """Build demo stress periods.
 
     The advanced export workflow expects columns:
     name, start_date, end_date.
     """
+    if stress_period_mode == "synthetic":
+        return _build_synthetic_demo_stress_periods(price_index)
+
+    if stress_period_mode != "crisis":
+        raise AdvancedResearchDemoInputError(
+            "stress_period_mode must be either 'crisis' or 'synthetic'."
+        )
+
     crisis_windows = filter_crisis_windows_for_index(price_index)
 
     if crisis_windows:
@@ -235,6 +255,24 @@ def _build_demo_stress_periods(price_index: pd.Index) -> pd.DataFrame:
             columns=["name", "start_date", "end_date"],
         )
 
+    return _build_synthetic_demo_stress_periods(price_index)
+
+
+def _build_stress_periods(
+    stress_period_mode: StressPeriodMode = "crisis",
+) -> pd.DataFrame:
+    """Build stress periods for backward-compatible internal callers."""
+    price_data = _build_demo_price_data()
+    price_date_index = _extract_price_date_index(price_data)
+
+    return _build_demo_stress_periods(
+        price_date_index,
+        stress_period_mode=stress_period_mode,
+    )
+
+
+def _build_synthetic_demo_stress_periods(price_index: pd.Index) -> pd.DataFrame:
+    """Build deterministic synthetic stress periods for demo-only use."""
     date_index = pd.DatetimeIndex(price_index)
 
     if date_index.empty:
@@ -255,14 +293,6 @@ def _build_demo_stress_periods(price_index: pd.Index) -> pd.DataFrame:
         ],
         columns=["name", "start_date", "end_date"],
     )
-
-
-def _build_stress_periods() -> pd.DataFrame:
-    """Build stress periods for backward-compatible internal callers."""
-    price_data = _build_demo_price_data()
-    price_date_index = _extract_price_date_index(price_data)
-
-    return _build_demo_stress_periods(price_date_index)
 
 
 def _build_factor_returns() -> pd.DataFrame:

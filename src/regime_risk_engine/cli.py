@@ -265,6 +265,16 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Fail if demo input files already exist.",
     )
+    advanced_demo_parser.add_argument(
+        "--stress-period-mode",
+        choices=["crisis", "synthetic"],
+        default="crisis",
+        help=(
+            "Stress-period source for generated demo inputs. "
+            "Use 'crisis' for historical crisis presets or 'synthetic' "
+            "for a deterministic demo-only window."
+        ),
+    )
     advanced_demo_parser.set_defaults(
         handler=_handle_create_advanced_demo_inputs,
         parser=advanced_demo_parser,
@@ -328,6 +338,16 @@ def build_parser() -> argparse.ArgumentParser:
         "--no-overwrite",
         action="store_true",
         help="Fail if demo output files already exist.",
+    )
+    advanced_demo_workflow_parser.add_argument(
+        "--stress-period-mode",
+        choices=["crisis", "synthetic"],
+        default="crisis",
+        help=(
+            "Stress-period source for generated demo inputs. "
+            "Use 'crisis' for historical crisis presets or 'synthetic' "
+            "for a deterministic demo-only window."
+        ),
     )
     advanced_demo_workflow_parser.set_defaults(
         handler=_handle_run_advanced_demo,
@@ -541,6 +561,7 @@ def _handle_create_advanced_demo_inputs(args: argparse.Namespace) -> int:
         result = create_advanced_research_demo_inputs(
             output_dir=args.output_dir,
             overwrite=not args.no_overwrite,
+            stress_period_mode=args.stress_period_mode,
         )
     except AdvancedResearchDemoInputError as exc:
         print(f"Advanced demo input creation failed: {exc}")
@@ -578,6 +599,7 @@ def _handle_run_advanced_demo(args: argparse.Namespace) -> int:
             scenario_simulations=args.scenario_simulations,
             analyst=args.analyst,
             overwrite=not args.no_overwrite,
+            stress_period_mode=args.stress_period_mode,
         )
     except (AdvancedResearchDemoWorkflowError, ValueError) as exc:
         print(f"Advanced demo workflow failed: {exc}")
