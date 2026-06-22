@@ -552,6 +552,13 @@ Potential next improvements:
 * Add Docker support.
 * Add package release workflow.
 
+## Rolling factor exposure example
+
+A rolling factor exposure example is available at:
+
+```text
+docs/examples/rolling_factor_exposure_example.md
+
 ---
 
 ## Disclaimer
