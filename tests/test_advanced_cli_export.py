@@ -121,6 +121,8 @@ def test_export_advanced_research_from_files(tmp_path: Path) -> None:
     assert "regime_intelligence_profile" in result.exported_table_paths
     assert "stress_test_summary" in result.exported_table_paths
     assert "factor_exposure" in result.exported_table_paths
+    assert "rolling_factor_exposures" in result.exported_table_paths
+    assert "rolling_factor_exposure_summary" in result.exported_table_paths
     assert "scenario_terminal_summary" in result.exported_table_paths
 
     cli_output = format_advanced_export_result(result)
@@ -152,6 +154,8 @@ def test_export_advanced_research_from_files_works_without_optional_files(
     assert result.memo_path.exists()
     assert "regime_intelligence_profile" in result.exported_table_paths
     assert "scenario_terminal_summary" in result.exported_table_paths
+    assert "rolling_factor_exposures" not in result.exported_table_paths
+    assert "rolling_factor_exposure_summary" not in result.exported_table_paths
 
 
 def test_export_advanced_research_rejects_missing_price_file(
@@ -214,4 +218,22 @@ def test_export_advanced_research_rejects_policy_with_missing_ticker(
             static_weights_path=static_weights_path,
             regime_policy_path=regime_policy_path,
             output_dir=tmp_path / "advanced_export",
+        )
+
+
+def test_export_advanced_research_rejects_invalid_rolling_factor_window(
+    tmp_path: Path,
+) -> None:
+    price_path = tmp_path / "prices.csv"
+    static_weights_path = tmp_path / "static_weights.csv"
+
+    make_price_data().to_csv(price_path, index=False)
+    write_static_weights(static_weights_path)
+
+    with pytest.raises(AdvancedResearchCliExportError, match="Rolling factor window"):
+        export_advanced_research_from_files(
+            price_data_path=price_path,
+            static_weights_path=static_weights_path,
+            output_dir=tmp_path / "advanced_export",
+            rolling_factor_window=0,
         )

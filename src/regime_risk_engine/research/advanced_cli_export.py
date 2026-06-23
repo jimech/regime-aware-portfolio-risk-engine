@@ -38,6 +38,7 @@ def export_advanced_research_from_files(
     random_state: int = 42,
     scenario_horizon: int = 21,
     scenario_simulations: int = 1_000,
+    rolling_factor_window: int = 20,
     analyst: str | None = None,
     overwrite: bool = True,
 ) -> AdvancedResearchExportResult:
@@ -46,6 +47,7 @@ def export_advanced_research_from_files(
     _validate_positive_int(feature_window, "Feature window")
     _validate_positive_int(scenario_horizon, "Scenario horizon")
     _validate_positive_int(scenario_simulations, "Scenario simulations")
+    _validate_positive_int(rolling_factor_window, "Rolling factor window")
 
     price_data = _read_price_data(price_data_path)
     static_weights = _read_static_weights(static_weights_path)
@@ -101,6 +103,7 @@ def export_advanced_research_from_files(
             n_simulations=scenario_simulations,
             random_state=random_state,
         ),
+        rolling_factor_window=rolling_factor_window,
     )
 
     return export_advanced_research_package(

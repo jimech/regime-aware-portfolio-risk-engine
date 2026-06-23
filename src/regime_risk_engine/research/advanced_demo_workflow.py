@@ -33,6 +33,7 @@ def run_advanced_research_demo_workflow(
     random_state: int = 42,
     scenario_horizon: int = 21,
     scenario_simulations: int = 1_000,
+    rolling_factor_window: int = 20,
     analyst: str | None = None,
     stress_period_mode: StressPeriodMode = "crisis",
     overwrite: bool = True,
@@ -62,6 +63,7 @@ def run_advanced_research_demo_workflow(
         random_state=random_state,
         scenario_horizon=scenario_horizon,
         scenario_simulations=scenario_simulations,
+        rolling_factor_window=rolling_factor_window,
         analyst=analyst,
         overwrite=overwrite,
     )

@@ -239,6 +239,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="Number of forward scenario simulations.",
     )
     advanced_export_parser.add_argument(
+        "--rolling-factor-window",
+        type=int,
+        default=20,
+        help="Rolling window used for rolling factor exposure analysis.",
+    )
+    advanced_export_parser.add_argument(
         "--analyst",
         help="Optional analyst name.",
     )
@@ -330,6 +336,12 @@ def build_parser() -> argparse.ArgumentParser:
         type=int,
         default=1_000,
         help="Number of forward scenario simulations.",
+    )
+    advanced_demo_workflow_parser.add_argument(
+        "--rolling-factor-window",
+        type=int,
+        default=20,
+        help="Rolling window used for rolling factor exposure analysis.",
     )
     advanced_demo_workflow_parser.add_argument(
         "--analyst",
@@ -615,6 +627,7 @@ def _handle_export_advanced_research(args: argparse.Namespace) -> int:
             random_state=args.random_state,
             scenario_horizon=args.scenario_horizon,
             scenario_simulations=args.scenario_simulations,
+            rolling_factor_window=args.rolling_factor_window,
             analyst=args.analyst,
             overwrite=not args.no_overwrite,
         )
@@ -715,6 +728,7 @@ def _handle_run_advanced_demo(args: argparse.Namespace) -> int:
             random_state=args.random_state,
             scenario_horizon=args.scenario_horizon,
             scenario_simulations=args.scenario_simulations,
+            rolling_factor_window=args.rolling_factor_window,
             analyst=args.analyst,
             overwrite=not args.no_overwrite,
             stress_period_mode=args.stress_period_mode,
