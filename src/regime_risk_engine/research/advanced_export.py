@@ -8,6 +8,10 @@ from regime_risk_engine.research.advanced_memo import (
     AdvancedResearchMemoInputs,
     build_advanced_research_memo,
 )
+from regime_risk_engine.research.rolling_factor_exposure import (
+    summarize_rolling_factor_exposures,
+    write_rolling_factor_exposures_csv,
+)
 
 
 class AdvancedResearchExportError(ValueError):
@@ -121,6 +125,14 @@ def _build_table_paths(
             table_paths["regime_factor_exposure"] = (
                 output_dir / "regime_factor_exposure.csv"
             )
+
+    if inputs.rolling_factor_exposure is not None:
+        table_paths["rolling_factor_exposures"] = (
+            output_dir / "rolling_factor_exposures.csv"
+        )
+        table_paths["rolling_factor_exposure_summary"] = (
+            output_dir / "rolling_factor_exposure_summary.csv"
+        )
 
     if inputs.scenario_simulation is not None:
         table_paths["scenario_terminal_summary"] = (
@@ -246,6 +258,21 @@ def _export_tables(
                 table_paths["regime_factor_exposure"],
             )
             exported["regime_factor_exposure"] = table_paths["regime_factor_exposure"]
+
+    if inputs.rolling_factor_exposure is not None:
+        write_rolling_factor_exposures_csv(
+            table_paths["rolling_factor_exposures"],
+            inputs.rolling_factor_exposure,
+        )
+        exported["rolling_factor_exposures"] = table_paths["rolling_factor_exposures"]
+
+        _write_table(
+            summarize_rolling_factor_exposures(inputs.rolling_factor_exposure),
+            table_paths["rolling_factor_exposure_summary"],
+        )
+        exported["rolling_factor_exposure_summary"] = table_paths[
+            "rolling_factor_exposure_summary"
+        ]
 
     if inputs.scenario_simulation is not None:
         _write_table(

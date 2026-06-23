@@ -29,6 +29,10 @@ from regime_risk_engine.research.regime_transitions import (
     RegimeTransitionSummary,
     build_regime_transition_summary,
 )
+from regime_risk_engine.research.rolling_factor_exposure import (
+    RollingFactorExposureResult,
+    estimate_rolling_factor_exposures,
+)
 from regime_risk_engine.research.scenario_simulation import (
     RegimeScenarioSimulationConfig,
     RegimeScenarioSimulationResult,
@@ -55,6 +59,7 @@ class AdvancedResearchWorkflowResult:
     stress_test: StressTestSummary | None
     attribution: StrategyAttributionSummary
     factor_exposure: FactorExposureSummary | None
+    rolling_factor_exposure: RollingFactorExposureResult | None
     scenario_simulation: RegimeScenarioSimulationResult
     advanced_inputs: AdvancedResearchMemoInputs
     advanced_memo: str
@@ -68,6 +73,7 @@ def build_advanced_research_workflow(
     advanced_memo_config: AdvancedResearchMemoConfig | None = None,
     scenario_config: RegimeScenarioSimulationConfig | None = None,
     annualization_factor: int = 252,
+    rolling_factor_window: int = 20,
 ) -> AdvancedResearchWorkflowResult:
     """Build advanced research outputs from a market workflow result."""
     _validate_market_result(market_result)
@@ -103,6 +109,7 @@ def build_advanced_research_workflow(
         )
 
     factor_exposure = None
+    rolling_factor_exposure = None
 
     if factor_returns is not None:
         factor_exposure = build_factor_exposure_summary(
@@ -110,6 +117,13 @@ def build_advanced_research_workflow(
             factor_returns=factor_returns,
             regime_labels=strategy_regime_return_frame["regime"],
             annualization_factor=annualization_factor,
+        )
+        rolling_factor_exposure = estimate_rolling_factor_exposures(
+            strategy_returns=_build_dynamic_strategy_return_input(
+                strategy_regime_return_frame
+            ),
+            factor_returns=_build_factor_return_input(factor_returns),
+            window=rolling_factor_window,
         )
 
     advanced_inputs = AdvancedResearchMemoInputs(
@@ -119,6 +133,7 @@ def build_advanced_research_workflow(
         stress_test=stress_test,
         attribution=attribution,
         factor_exposure=factor_exposure,
+        rolling_factor_exposure=rolling_factor_exposure,
         scenario_simulation=scenario_simulation,
     )
     advanced_memo = build_advanced_research_memo(
@@ -133,6 +148,7 @@ def build_advanced_research_workflow(
         stress_test=stress_test,
         attribution=attribution,
         factor_exposure=factor_exposure,
+        rolling_factor_exposure=rolling_factor_exposure,
         scenario_simulation=scenario_simulation,
         advanced_inputs=advanced_inputs,
         advanced_memo=advanced_memo,
@@ -180,3 +196,21 @@ def _build_strategy_regime_return_frame(
     frame["regime"] = regime_labels.loc[common_index].astype(int)
 
     return frame
+
+
+def _build_dynamic_strategy_return_input(
+    strategy_regime_return_frame: pd.DataFrame,
+) -> pd.DataFrame:
+    strategy_returns = strategy_regime_return_frame[["dynamic"]].rename(
+        columns={"dynamic": "return"}
+    )
+    strategy_returns.index.name = "date"
+
+    return strategy_returns.reset_index()
+
+
+def _build_factor_return_input(factor_returns: pd.DataFrame) -> pd.DataFrame:
+    factor_return_input = factor_returns.copy()
+    factor_return_input.index.name = "date"
+
+    return factor_return_input.reset_index()

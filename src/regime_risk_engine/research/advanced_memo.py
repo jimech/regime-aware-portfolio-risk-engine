@@ -6,6 +6,10 @@ from regime_risk_engine.research.attribution import StrategyAttributionSummary
 from regime_risk_engine.research.factor_exposure import FactorExposureSummary
 from regime_risk_engine.research.regime_intelligence import RegimeIntelligenceSummary
 from regime_risk_engine.research.regime_transitions import RegimeTransitionSummary
+from regime_risk_engine.research.rolling_factor_exposure import (
+    RollingFactorExposureResult,
+    summarize_rolling_factor_exposures,
+)
 from regime_risk_engine.research.scenario_simulation import (
     RegimeScenarioSimulationResult,
 )
@@ -35,6 +39,7 @@ class AdvancedResearchMemoInputs:
     stress_test: StressTestSummary | None = None
     attribution: StrategyAttributionSummary | None = None
     factor_exposure: FactorExposureSummary | None = None
+    rolling_factor_exposure: RollingFactorExposureResult | None = None
     scenario_simulation: RegimeScenarioSimulationResult | None = None
 
 
@@ -67,6 +72,11 @@ def build_advanced_research_memo(
 
     if inputs.factor_exposure is not None:
         sections.append(_build_factor_exposure_section(inputs.factor_exposure))
+
+    if inputs.rolling_factor_exposure is not None:
+        sections.append(
+            _build_rolling_factor_exposure_section(inputs.rolling_factor_exposure)
+        )
 
     if inputs.scenario_simulation is not None:
         sections.append(_build_scenario_simulation_section(inputs.scenario_simulation))
@@ -247,6 +257,47 @@ def _build_factor_exposure_section(summary: FactorExposureSummary) -> str:
     return f"## Factor Exposure Analysis\n\n{summary.narrative}\n\n{table}"
 
 
+def _build_rolling_factor_exposure_section(
+    summary: RollingFactorExposureResult,
+) -> str:
+    exposure_summary = summarize_rolling_factor_exposures(summary)
+
+    rows = []
+
+    for row in exposure_summary.to_dict(orient="records"):
+        rows.append(
+            [
+                str(row["factor"]),
+                _format_decimal(row["latest_beta"]),
+                _format_decimal(row["average_beta"]),
+                _format_decimal(row["minimum_beta"]),
+                _format_decimal(row["maximum_beta"]),
+                _format_decimal(row["beta_volatility"]),
+            ]
+        )
+
+    table = _build_markdown_table(
+        headers=[
+            "Factor",
+            "Latest Beta",
+            "Average Beta",
+            "Minimum Beta",
+            "Maximum Beta",
+            "Beta Volatility",
+        ],
+        rows=rows,
+    )
+
+    return (
+        "## Rolling Factor Exposure Analysis\n\n"
+        "Rolling factor exposure analysis estimates how the dynamic strategy's "
+        "factor betas changed through time. This helps evaluate whether "
+        "regime-aware allocation decisions translated into measurable changes "
+        "in equity, defensive, or real-asset risk exposure.\n\n"
+        f"{table}"
+    )
+
+
 def _build_scenario_simulation_section(
     summary: RegimeScenarioSimulationResult,
 ) -> str:
@@ -294,6 +345,9 @@ def _build_research_takeaway_section(inputs: AdvancedResearchMemoInputs) -> str:
 
     if inputs.factor_exposure is not None:
         available_sections.append("factor exposure diagnostics")
+
+    if inputs.rolling_factor_exposure is not None:
+        available_sections.append("rolling factor exposure diagnostics")
 
     if inputs.scenario_simulation is not None:
         available_sections.append("forward scenario simulation")
