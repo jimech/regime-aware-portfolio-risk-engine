@@ -488,6 +488,7 @@ pytest --cov=regime_risk_engine --cov-report=term-missing
 ## Project Documentation
 
 - [Methodology](docs/methodology.md)
+- [Rolling factor exposure methodology](docs/methodology/rolling-factor-exposure.md)
 - [CLI usage](docs/cli.md)
 - [Quality checklist](docs/quality-checklist.md)
 - [Release checklist](docs/release-checklist.md)

@@ -691,3 +691,27 @@ The CLI includes a command for creating deterministic advanced demo inputs.
 This command writes price data, static weights, regime policy, stress periods, and factor returns to disk.
 
 The generated files can be passed directly into the advanced research export command.
+
+
+
+## Inputs
+
+The analysis requires:
+
+- A strategy return series.
+
+- One or more factor return series.
+
+- A rolling window length.
+
+- A minimum observation threshold.
+
+The strategy return series represents the portfolio being analyzed. The factor return series may represent broad risk drivers such as equity beta, defensive bond exposure, real-asset exposure, inflation-sensitive assets, or other custom macro/market factors.
+
+## Rolling regression model
+
+For each rolling window, the engine estimates an ordinary least squares regression:
+
+```text
+
+strategy_return = alpha + beta_1 * factor_1 + beta_2 * factor_2 + ... + error
