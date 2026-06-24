@@ -572,3 +572,53 @@ A rolling factor exposure example is available at:
 
 ```text
 docs/examples/rolling_factor_exposure_example.md
+
+<!-- QUICK_REVIEWER_WORKFLOW_START -->
+
+## Quick reviewer workflow
+
+This project can be reviewed through a generated advanced research package and an interactive Streamlit dashboard.
+
+### 1. Generate the advanced demo research package
+
+Run:
+
+    python -m regime_risk_engine run-advanced-demo \
+      --output-dir outputs/advanced_demo \
+      --analyst "Jimena Chinchilla"
+
+This creates:
+
+- outputs/advanced_demo/inputs/
+- outputs/advanced_demo/package/advanced_research_memo.md
+- outputs/advanced_demo/package/manifest.json
+- Supporting CSV tables for regimes, stress tests, attribution, factor exposure, rolling factor exposure, factor significance, and scenario simulation.
+
+### 2. Inspect the generated package
+
+Run:
+
+    python -m regime_risk_engine inspect-advanced-package \
+      --package-dir outputs/advanced_demo/package
+
+This validates the package manifest and lists the memo and exported research tables.
+
+### 3. Launch the dashboard
+
+Run:
+
+    streamlit run src/regime_risk_engine/dashboard.py
+
+The dashboard loads the generated package from outputs/advanced_demo/package and displays the memo, package summary, and supporting tables.
+
+### Useful docs
+
+- [Reviewer guide](docs/reviewer-guide.md)
+- [Thesis analysis](docs/thesis-analysis.md)
+- [Advanced research memo example](docs/examples/advanced_research_memo_example.md)
+- [Advanced research package manifest](docs/examples/advanced_research_package_manifest.md)
+- [Advanced research package loader](docs/examples/advanced_research_package_loader.md)
+- [Advanced research package summary](docs/examples/advanced_research_package_summary.md)
+
+<!-- QUICK_REVIEWER_WORKFLOW_END -->
+
