@@ -69,3 +69,11 @@ A manifest example is available at:
 
 ```text
 docs/examples/advanced_research_package_manifest.md
+```
+
+## Advanced research package loader
+
+A package loader example is available at:
+
+```text
+docs/examples/advanced_research_package_loader.md
