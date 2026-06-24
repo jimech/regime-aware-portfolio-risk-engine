@@ -2,6 +2,8 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 
+import pandas as pd
+
 
 class AdvancedPackageManifestError(ValueError):
     """Raised when an advanced research package manifest cannot be inspected."""
@@ -25,6 +27,19 @@ class AdvancedPackageManifestInspection:
                 name: str(path) for name, path in sorted(self.table_paths.items())
             },
         }
+
+
+@dataclass(frozen=True, slots=True)
+class AdvancedResearchPackage:
+    """Loaded advanced research package contents."""
+
+    package_dir: Path
+    manifest_path: Path
+    memo: str
+    tables: dict[str, pd.DataFrame]
+
+    def table_names(self) -> list[str]:
+        return sorted(self.tables)
 
 
 def inspect_advanced_package_manifest(
@@ -131,3 +146,22 @@ def format_advanced_package_manifest_inspection(
         lines.append(f"- {name}: {path}")
 
     return "\n".join(lines)
+
+
+def load_advanced_research_package(
+    package_dir: str | Path,
+) -> AdvancedResearchPackage:
+    """Load an advanced research package from its manifest."""
+    inspection = inspect_advanced_package_manifest(package_dir)
+
+    memo = inspection.memo_path.read_text(encoding="utf-8")
+    tables = {
+        name: pd.read_csv(path) for name, path in sorted(inspection.table_paths.items())
+    }
+
+    return AdvancedResearchPackage(
+        package_dir=inspection.package_dir,
+        manifest_path=inspection.manifest_path,
+        memo=memo,
+        tables=tables,
+    )
