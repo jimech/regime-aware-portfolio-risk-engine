@@ -130,6 +130,30 @@ def inspect_advanced_package_manifest(
     )
 
 
+@dataclass(frozen=True, slots=True)
+class AdvancedResearchPackageSummary:
+    """Dashboard-ready summary of a loaded advanced research package."""
+
+    memo_title: str
+    table_count: int
+    table_names: list[str]
+    has_factor_significance: bool
+    has_rolling_factor_exposure: bool
+    has_scenario_simulation: bool
+    has_stress_test: bool
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "memo_title": self.memo_title,
+            "table_count": self.table_count,
+            "table_names": self.table_names,
+            "has_factor_significance": self.has_factor_significance,
+            "has_rolling_factor_exposure": self.has_rolling_factor_exposure,
+            "has_scenario_simulation": self.has_scenario_simulation,
+            "has_stress_test": self.has_stress_test,
+        }
+
+
 def format_advanced_package_manifest_inspection(
     inspection: AdvancedPackageManifestInspection,
 ) -> str:
@@ -165,3 +189,35 @@ def load_advanced_research_package(
         memo=memo,
         tables=tables,
     )
+
+
+def summarize_advanced_research_package(
+    package: AdvancedResearchPackage,
+) -> AdvancedResearchPackageSummary:
+    """Build a dashboard-ready summary of a loaded advanced research package."""
+    table_names = package.table_names()
+
+    return AdvancedResearchPackageSummary(
+        memo_title=_extract_markdown_title(package.memo),
+        table_count=len(table_names),
+        table_names=table_names,
+        has_factor_significance="factor_significance" in package.tables,
+        has_rolling_factor_exposure=(
+            "rolling_factor_exposures" in package.tables
+            or "rolling_factor_exposure_summary" in package.tables
+        ),
+        has_scenario_simulation=any(
+            name.startswith("scenario_") for name in package.tables
+        ),
+        has_stress_test="stress_test_summary" in package.tables,
+    )
+
+
+def _extract_markdown_title(markdown: str) -> str:
+    for line in markdown.splitlines():
+        stripped = line.strip()
+
+        if stripped.startswith("# "):
+            return stripped.removeprefix("# ").strip()
+
+    return "Untitled research package"
