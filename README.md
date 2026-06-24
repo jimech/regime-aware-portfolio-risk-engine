@@ -622,3 +622,46 @@ The dashboard loads the generated package from outputs/advanced_demo/package and
 
 <!-- QUICK_REVIEWER_WORKFLOW_END -->
 
+<!-- PROJECT_DEMONSTRATES_START -->
+
+## What this project demonstrates
+
+This project demonstrates an end-to-end quantitative research workflow for regime-aware portfolio risk analysis.
+
+It includes:
+
+- Multi-asset market data preparation
+- Regime detection and regime diagnostics
+- Dynamic allocation research
+- Backtesting and transaction-cost-aware comparison
+- Stress-period analysis
+- Strategy attribution
+- Factor exposure analysis
+- Rolling factor exposure diagnostics
+- Factor significance testing
+- Forward scenario simulation
+- Reproducible advanced research package exports
+- Manifest-based package inspection and loading
+- Streamlit dashboard review interface
+
+The project is designed as a research engine, not a live trading system.
+
+<!-- PROJECT_DEMONSTRATES_END -->
+
+<!-- PRIMARY_REVIEW_ARTIFACTS_START -->
+
+## Primary review artifacts
+
+Start here if you are reviewing the project:
+
+- [Reviewer guide](docs/reviewer-guide.md)
+- [Thesis analysis](docs/thesis-analysis.md)
+- [Rendered advanced research memo example](docs/examples/advanced_research_memo_example.md)
+- [Advanced research package manifest](docs/examples/advanced_research_package_manifest.md)
+- [Advanced research package loader](docs/examples/advanced_research_package_loader.md)
+- [Advanced research package summary](docs/examples/advanced_research_package_summary.md)
+- [Rolling factor exposure example](docs/examples/rolling_factor_exposure_example.md)
+- [Factor significance example](docs/examples/factor_significance_example.md)
+
+<!-- PRIMARY_REVIEW_ARTIFACTS_END -->
+
