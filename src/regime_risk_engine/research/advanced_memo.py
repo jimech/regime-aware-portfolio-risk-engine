@@ -80,6 +80,9 @@ def build_advanced_research_memo(
             _build_rolling_factor_exposure_section(inputs.rolling_factor_exposure)
         )
 
+    if inputs.factor_significance is not None:
+        sections.append(_build_factor_significance_section(inputs.factor_significance))
+
     if inputs.scenario_simulation is not None:
         sections.append(_build_scenario_simulation_section(inputs.scenario_simulation))
 
@@ -300,6 +303,50 @@ def _build_rolling_factor_exposure_section(
     )
 
 
+def _build_factor_significance_section(
+    summary: FactorSignificanceResult,
+) -> str:
+    rows = []
+
+    for row in summary.significance_table.to_dict(orient="records"):
+        rows.append(
+            [
+                str(row["strategy"]),
+                str(row["factor"]),
+                _format_decimal(row["beta"]),
+                _format_decimal(row["standard_error"]),
+                _format_decimal(row["t_stat"]),
+                _format_decimal(row["p_value"]),
+                "yes" if bool(row["significant"]) else "no",
+            ]
+        )
+
+    table = _build_markdown_table(
+        headers=[
+            "Strategy",
+            "Factor",
+            "Beta",
+            "Std. Error",
+            "T-Stat",
+            "P-Value",
+            "Significant",
+        ],
+        rows=rows,
+    )
+
+    return (
+        "## Factor Significance Analysis\n\n"
+        "Factor significance analysis estimates whether the dynamic strategy's "
+        "factor betas are statistically distinguishable from zero under an "
+        "ordinary least squares diagnostic. This helps separate economically "
+        "large exposures from noisy factor relationships.\n\n"
+        f"Regression alpha: {_format_decimal(summary.alpha)}\n\n"
+        f"Regression R-squared: {_format_decimal(summary.r_squared)}\n\n"
+        f"Observations: {summary.observations}\n\n"
+        f"{table}"
+    )
+
+
 def _build_scenario_simulation_section(
     summary: RegimeScenarioSimulationResult,
 ) -> str:
@@ -350,6 +397,9 @@ def _build_research_takeaway_section(inputs: AdvancedResearchMemoInputs) -> str:
 
     if inputs.rolling_factor_exposure is not None:
         available_sections.append("rolling factor exposure diagnostics")
+
+    if inputs.factor_significance is not None:
+        available_sections.append("factor significance diagnostics")
 
     if inputs.scenario_simulation is not None:
         available_sections.append("forward scenario simulation")

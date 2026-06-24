@@ -1,0 +1,4 @@
+index,regime,observation_count,static_cumulative_return,dynamic_cumulative_return,active_return_contribution,top_positive_asset,top_negative_asset,largest_overweight_asset,largest_underweight_asset
+0,0,67,0.024298711288436747,0.044518913701340423,0.019574999999999884,GLD,TLT,GLD,TLT
+1,1,44,-0.017369916866812996,0.026354510489971616,0.043479999999998215,SPY,GLD,TLT,SPY
+2,2,58,0.011927407641300736,0.04649760531768443,0.03357499999999954,GLD,TLT,GLD,SPY
