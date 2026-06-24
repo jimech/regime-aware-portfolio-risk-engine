@@ -134,6 +134,9 @@ def _build_table_paths(
             output_dir / "rolling_factor_exposure_summary.csv"
         )
 
+    if inputs.factor_significance is not None:
+        table_paths["factor_significance"] = output_dir / "factor_significance.csv"
+
     if inputs.scenario_simulation is not None:
         table_paths["scenario_terminal_summary"] = (
             output_dir / "scenario_terminal_summary.csv"
@@ -273,6 +276,13 @@ def _export_tables(
         exported["rolling_factor_exposure_summary"] = table_paths[
             "rolling_factor_exposure_summary"
         ]
+
+    if inputs.factor_significance is not None:
+        _write_table(
+            inputs.factor_significance.significance_table,
+            table_paths["factor_significance"],
+        )
+        exported["factor_significance"] = table_paths["factor_significance"]
 
     if inputs.scenario_simulation is not None:
         _write_table(

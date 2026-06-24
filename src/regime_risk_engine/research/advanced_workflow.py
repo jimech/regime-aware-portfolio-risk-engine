@@ -16,6 +16,10 @@ from regime_risk_engine.research.factor_exposure import (
     FactorExposureSummary,
     build_factor_exposure_summary,
 )
+from regime_risk_engine.research.factor_significance import (
+    FactorSignificanceResult,
+    estimate_factor_significance,
+)
 from regime_risk_engine.research.market_workflow import MarketResearchWorkflowResult
 from regime_risk_engine.research.memo import (
     MarketResearchMemoConfig,
@@ -60,6 +64,7 @@ class AdvancedResearchWorkflowResult:
     attribution: StrategyAttributionSummary
     factor_exposure: FactorExposureSummary | None
     rolling_factor_exposure: RollingFactorExposureResult | None
+    factor_significance: FactorSignificanceResult | None
     scenario_simulation: RegimeScenarioSimulationResult
     advanced_inputs: AdvancedResearchMemoInputs
     advanced_memo: str
@@ -110,8 +115,14 @@ def build_advanced_research_workflow(
 
     factor_exposure = None
     rolling_factor_exposure = None
+    factor_significance = None
 
     if factor_returns is not None:
+        dynamic_strategy_returns = _build_dynamic_strategy_return_input(
+            strategy_regime_return_frame
+        )
+        factor_return_input = _build_factor_return_input(factor_returns)
+
         factor_exposure = build_factor_exposure_summary(
             strategy_returns=strategy_regime_return_frame[["static", "dynamic"]],
             factor_returns=factor_returns,
@@ -119,11 +130,14 @@ def build_advanced_research_workflow(
             annualization_factor=annualization_factor,
         )
         rolling_factor_exposure = estimate_rolling_factor_exposures(
-            strategy_returns=_build_dynamic_strategy_return_input(
-                strategy_regime_return_frame
-            ),
-            factor_returns=_build_factor_return_input(factor_returns),
+            strategy_returns=dynamic_strategy_returns,
+            factor_returns=factor_return_input,
             window=rolling_factor_window,
+        )
+        factor_significance = estimate_factor_significance(
+            strategy_returns=dynamic_strategy_returns,
+            factor_returns=factor_return_input,
+            strategy_name="dynamic",
         )
 
     advanced_inputs = AdvancedResearchMemoInputs(
@@ -135,6 +149,7 @@ def build_advanced_research_workflow(
         factor_exposure=factor_exposure,
         rolling_factor_exposure=rolling_factor_exposure,
         scenario_simulation=scenario_simulation,
+        factor_significance=factor_significance,
     )
     advanced_memo = build_advanced_research_memo(
         inputs=advanced_inputs,
@@ -149,6 +164,7 @@ def build_advanced_research_workflow(
         attribution=attribution,
         factor_exposure=factor_exposure,
         rolling_factor_exposure=rolling_factor_exposure,
+        factor_significance=factor_significance,
         scenario_simulation=scenario_simulation,
         advanced_inputs=advanced_inputs,
         advanced_memo=advanced_memo,

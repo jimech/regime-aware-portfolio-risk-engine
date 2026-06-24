@@ -80,3 +80,18 @@ def test_advanced_export_includes_rolling_factor_exposure_tables(
     assert "equity_beta" in rolling.columns
     assert "factor" in summary.columns
     assert "Rolling Factor Exposure Analysis" in memo
+    assert "factor_significance" in result.exported_table_paths
+
+    factor_significance_path = result.exported_table_paths["factor_significance"]
+    assert factor_significance_path.exists()
+
+    factor_significance = pd.read_csv(factor_significance_path)
+
+    assert "factor" in factor_significance.columns
+    assert "beta" in factor_significance.columns
+    assert "standard_error" in factor_significance.columns
+    assert "t_stat" in factor_significance.columns
+    assert "p_value" in factor_significance.columns
+    assert "significant" in factor_significance.columns
+    assert "factor_significance" in result.exported_table_paths
+    assert result.exported_table_paths["factor_significance"].exists()

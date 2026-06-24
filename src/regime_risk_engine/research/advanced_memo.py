@@ -4,6 +4,7 @@ import pandas as pd
 
 from regime_risk_engine.research.attribution import StrategyAttributionSummary
 from regime_risk_engine.research.factor_exposure import FactorExposureSummary
+from regime_risk_engine.research.factor_significance import FactorSignificanceResult
 from regime_risk_engine.research.regime_intelligence import RegimeIntelligenceSummary
 from regime_risk_engine.research.regime_transitions import RegimeTransitionSummary
 from regime_risk_engine.research.rolling_factor_exposure import (
@@ -41,6 +42,7 @@ class AdvancedResearchMemoInputs:
     factor_exposure: FactorExposureSummary | None = None
     rolling_factor_exposure: RollingFactorExposureResult | None = None
     scenario_simulation: RegimeScenarioSimulationResult | None = None
+    factor_significance: FactorSignificanceResult | None = None
 
 
 def build_advanced_research_memo(
