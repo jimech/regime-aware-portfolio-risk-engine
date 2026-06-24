@@ -8,9 +8,9 @@ def _read_methodology_doc() -> str:
 
 
 def test_rolling_factor_exposure_methodology_doc_exists() -> None:
-    assert (
-        METHODOLOGY_DOC_PATH.exists()
-    ), f"Missing methodology doc: {METHODOLOGY_DOC_PATH}"
+    assert METHODOLOGY_DOC_PATH.exists(), (
+        f"Missing methodology doc: {METHODOLOGY_DOC_PATH}"
+    )
 
 
 def test_rolling_factor_exposure_methodology_doc_explains_key_outputs() -> None:
