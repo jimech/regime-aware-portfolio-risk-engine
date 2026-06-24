@@ -1,3 +1,4 @@
+import json
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -25,9 +26,11 @@ class AdvancedResearchExportResult:
     output_dir: Path
     memo_path: Path
     exported_table_paths: dict[str, Path]
+    manifest_path: Path
 
 
 ADVANCED_MEMO_FILENAME = "advanced_research_memo.md"
+ADVANCED_MANIFEST_FILENAME = "manifest.json"
 
 
 def export_advanced_research_package(
@@ -40,6 +43,7 @@ def export_advanced_research_package(
     clean_output_dir = _prepare_output_dir(output_dir)
 
     memo_path = clean_output_dir / ADVANCED_MEMO_FILENAME
+    manifest_path = clean_output_dir / ADVANCED_MANIFEST_FILENAME
     table_paths = _build_table_paths(
         inputs=inputs,
         output_dir=clean_output_dir,
@@ -47,6 +51,7 @@ def export_advanced_research_package(
 
     _validate_overwrite_policy(
         memo_path=memo_path,
+        manifest_path=manifest_path,
         table_paths=table_paths,
         overwrite=overwrite,
     )
@@ -61,11 +66,17 @@ def export_advanced_research_package(
         inputs=inputs,
         table_paths=table_paths,
     )
+    _write_manifest(
+        manifest_path=manifest_path,
+        memo_path=memo_path,
+        exported_table_paths=exported_table_paths,
+    )
 
     return AdvancedResearchExportResult(
         output_dir=clean_output_dir,
         memo_path=memo_path,
         exported_table_paths=exported_table_paths,
+        manifest_path=manifest_path,
     )
 
 
@@ -154,6 +165,7 @@ def _build_table_paths(
 
 def _validate_overwrite_policy(
     memo_path: Path,
+    manifest_path: Path,
     table_paths: dict[str, Path],
     overwrite: bool,
 ) -> None:
@@ -161,7 +173,9 @@ def _validate_overwrite_policy(
         return
 
     existing_paths = [
-        path for path in [memo_path, *table_paths.values()] if path.exists()
+        path
+        for path in [memo_path, manifest_path, *table_paths.values()]
+        if path.exists()
     ]
 
     if existing_paths:
@@ -312,6 +326,24 @@ def _export_tables(
         ]
 
     return exported
+
+
+def _write_manifest(
+    manifest_path: Path,
+    memo_path: Path,
+    exported_table_paths: dict[str, Path],
+) -> None:
+    manifest = {
+        "memo": str(memo_path.name),
+        "tables": {
+            name: str(path.name) for name, path in sorted(exported_table_paths.items())
+        },
+    }
+
+    manifest_path.write_text(
+        json.dumps(manifest, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
 
 
 def _write_table(frame: pd.DataFrame, path: Path) -> None:

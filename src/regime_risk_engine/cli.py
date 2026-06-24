@@ -745,6 +745,7 @@ def _handle_run_advanced_demo(args: argparse.Namespace) -> int:
                     "input_dir": str(result.input_result.output_dir),
                     "package_dir": str(result.export_result.output_dir),
                     "memo_path": str(result.export_result.memo_path),
+                    "manifest_path": str(result.export_result.manifest_path),
                     "exported_tables": {
                         name: str(path)
                         for name, path in sorted(
