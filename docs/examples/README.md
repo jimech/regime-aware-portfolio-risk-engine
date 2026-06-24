@@ -54,3 +54,10 @@ outputs/advanced_demo/package/
 ## Important note
 
 Generated outputs are not committed by default. They can be recreated deterministically using the CLI command above.
+
+## Factor significance example
+
+A factor significance example is available at:
+
+```text
+docs/examples/factor_significance_example.md
