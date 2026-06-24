@@ -36,6 +36,11 @@ from regime_risk_engine.research.advanced_demo_workflow import (
     format_advanced_demo_workflow_result,
     run_advanced_research_demo_workflow,
 )
+from regime_risk_engine.research.package_manifest import (
+    AdvancedPackageManifestError,
+    format_advanced_package_manifest_inspection,
+    inspect_advanced_package_manifest,
+)
 from regime_risk_engine.research.rolling_factor_exposure import (
     RollingFactorExposureError,
     read_rolling_factor_exposure_inputs,
@@ -372,6 +377,25 @@ def build_parser() -> argparse.ArgumentParser:
         parser=advanced_demo_workflow_parser,
     )
 
+    inspect_package_parser = subparsers.add_parser(
+        "inspect-advanced-package",
+        help="Inspect an advanced research package manifest.",
+    )
+    inspect_package_parser.add_argument(
+        "--package-dir",
+        required=True,
+        help="Directory containing an advanced research package manifest.",
+    )
+    inspect_package_parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Emit package inspection result as JSON.",
+    )
+    inspect_package_parser.set_defaults(
+        handler=_handle_inspect_advanced_package,
+        parser=inspect_package_parser,
+    )
+
     rolling_factor_parser = subparsers.add_parser(
         "export-rolling-factor-exposure",
         help="Export rolling factor exposure tables from strategy and factor returns.",
@@ -667,6 +691,21 @@ def _handle_create_advanced_demo_inputs(args: argparse.Namespace) -> int:
         return 0
 
     print(format_advanced_demo_input_result(result))
+    return 0
+
+
+def _handle_inspect_advanced_package(args: argparse.Namespace) -> int:
+    try:
+        inspection = inspect_advanced_package_manifest(args.package_dir)
+    except AdvancedPackageManifestError as exc:
+        print(f"Advanced package inspection failed: {exc}")
+        return 1
+
+    if args.json:
+        print(json.dumps(inspection.to_dict(), sort_keys=True))
+        return 0
+
+    print(format_advanced_package_manifest_inspection(inspection))
     return 0
 
 
