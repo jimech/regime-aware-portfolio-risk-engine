@@ -61,3 +61,11 @@ A factor significance example is available at:
 
 ```text
 docs/examples/factor_significance_example.md
+```
+
+## Advanced research package manifest
+
+A manifest example is available at:
+
+```text
+docs/examples/advanced_research_package_manifest.md
