@@ -77,3 +77,12 @@ A package loader example is available at:
 
 ```text
 docs/examples/advanced_research_package_loader.md
+```
+
+## Advanced research package summary
+
+A package summary example is available at:
+
+docs/examples/advanced_research_package_summary.md
+
+This file explains how to create a dashboard-ready summary from a loaded advanced research package.
