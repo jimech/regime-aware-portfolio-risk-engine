@@ -1,0 +1,10 @@
+regime,ticker,weight
+0,SPY,0.7
+0,TLT,0.2
+0,GLD,0.1
+1,SPY,0.25
+1,TLT,0.55
+1,GLD,0.2
+2,SPY,0.35
+2,TLT,0.2
+2,GLD,0.45
