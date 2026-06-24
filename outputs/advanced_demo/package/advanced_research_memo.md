@@ -84,13 +84,11 @@ Regime transition analysis estimated transition probabilities across 3 regimes u
 
 ## Stress-Period Analysis
 
-Stress-period analysis compared dynamic against static across 3 stress windows. The candidate strategy protected capital in 2 of 3 periods. Average excess return across stress periods was 0.0264, and average drawdown improvement was 0.0228. The strongest stress-period result was Defensive drawdown. The weakest stress-period result was Growth expansion.
+Stress-period analysis compared dynamic against static across 1 stress windows. The candidate strategy protected capital in 1 of 1 periods. Average excess return across stress periods was 0.0214, and average drawdown improvement was 0.0298. The strongest stress-period result was covid_crash. The weakest stress-period result was covid_crash.
 
 | Stress Period | Return Delta | Drawdown Delta | Volatility Delta | Assessment |
 | --- | --- | --- | --- | --- |
-| Growth expansion | -2.76% | 0.00% | 1.02% | Reduced drawdown but lagged return |
-| Defensive drawdown | 7.03% | 6.85% | 2.06% | Protected capital |
-| Inflation rotation | 3.64% | 0.00% | 0.90% | Protected capital |
+| covid_crash | 2.14% | 2.98% | -1.34% | Protected capital |
 
 ## Strategy Attribution
 
@@ -111,6 +109,32 @@ Factor exposure analysis estimated 3 factor beta(s) for 2 strategy return series
 | static | equity | 0.5052 |
 | dynamic | equity | 0.2772 |
 
+## Rolling Factor Exposure Analysis
+
+Rolling factor exposure analysis estimates how the dynamic strategy's factor betas changed through time. This helps evaluate whether regime-aware allocation decisions translated into measurable changes in equity, defensive, or real-asset risk exposure.
+
+| Factor | Latest Beta | Average Beta | Minimum Beta | Maximum Beta | Beta Volatility |
+| --- | --- | --- | --- | --- | --- |
+| equity | 0.0000 | 0.0709 | -0.0000 | 0.4707 | 0.1319 |
+| defensive | -0.0000 | -0.0419 | -0.3661 | 0.0000 | 0.0932 |
+| real_asset | 0.0000 | 0.0202 | -0.0254 | 0.2510 | 0.0658 |
+
+## Factor Significance Analysis
+
+Factor significance analysis estimates whether the dynamic strategy's factor betas are statistically distinguishable from zero under an ordinary least squares diagnostic. This helps separate economically large exposures from noisy factor relationships.
+
+Regression alpha: 0.0009
+
+Regression R-squared: 0.5021
+
+Observations: 169
+
+| Strategy | Factor | Beta | Std. Error | T-Stat | P-Value | Significant |
+| --- | --- | --- | --- | --- | --- | --- |
+| dynamic | equity | 0.2772 | 0.0227 | 12.2201 | 0.0000 | yes |
+| dynamic | defensive | -0.0630 | 0.0236 | -2.6721 | 0.0075 | yes |
+| dynamic | real_asset | -0.0558 | 0.0348 | -1.6055 | 0.1084 | no |
+
 ## Forward Regime Scenario Simulation
 
 Regime scenario simulation generated 1000 forward paths over a 21-period horizon using historical regime transition behavior and regime-conditioned return sampling. The simulated mean terminal return difference for dynamic versus static was 0.0100. The simulated 95% CVaR difference was 0.0144, where a higher value indicates a less severe tail outcome. The most frequently simulated regime was regime 0.
@@ -122,7 +146,7 @@ Regime scenario simulation generated 1000 forward paths over a 21-period horizon
 
 ## Research Takeaway
 
-This memo combines the base regime-aware portfolio analysis with regime interpretation, transition stability, stress-period protection, performance attribution, factor exposure diagnostics, forward scenario simulation. Together, these sections evaluate not only whether the dynamic strategy performed well, but also why it performed that way, how stable the regimes were, how the strategy behaved in stress, and what forward-looking risks remain.
+This memo combines the base regime-aware portfolio analysis with regime interpretation, transition stability, stress-period protection, performance attribution, factor exposure diagnostics, rolling factor exposure diagnostics, factor significance diagnostics, forward scenario simulation. Together, these sections evaluate not only whether the dynamic strategy performed well, but also why it performed that way, how stable the regimes were, how the strategy behaved in stress, and what forward-looking risks remain.
 
 ## Advanced Research Limitations
 
