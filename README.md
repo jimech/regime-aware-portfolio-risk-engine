@@ -15,7 +15,13 @@ The project answers a practical portfolio-management question:
 
 This repository combines financial engineering, machine learning, risk analytics, backtesting, model validation, and automated reporting into one tested Python package.
 
+
 ---
+## Dashboard preview
+
+![Dashboard overview](docs/assets/dashboard-overview.png)
+
+The Streamlit dashboard loads a generated advanced research package and displays the research memo, package diagnostics, and exported tables.
 
 ## Executive Summary
 
